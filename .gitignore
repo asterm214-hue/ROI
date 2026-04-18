@@ -25,3 +25,6 @@ venv.bak/
 node_modules/
 dist/
 build/
+
+database.db
+*.db
