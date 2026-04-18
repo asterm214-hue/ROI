@@ -20,8 +20,16 @@ Experience a character-driven journey where your financial choices directly impa
    ```powershell
    .\venv\Scripts\Activate.ps1
    ```
-2. **Launch the Game**:
-   ```bash
+2. **Setup and Launch**:
+   ```powershell
+   # 1. Create and activate environment
+   py -m venv venv
+   .\venv\Scripts\Activate.ps1
+
+   # 2. Install dependencies
+   pip install -r requirements.txt
+
+   # 3. Start the game
    python app.py
    ```
 3. **Play**:
