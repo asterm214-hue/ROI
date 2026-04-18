@@ -1,114 +1,267 @@
 {
-    "start": {
-        "id": "start",
-        "title": "First Salary",
-        "text": "Your first paycheck of $30,000 just hit your account! This is the moment you've been waiting for. How will you allocate it?",
-        "speaker": "Narrator",
-        "background": "src/assets/office.png",
-        "choices": [
-            {
-                "id": "spend_all",
-                "text": "Splurge! New lifestyle, here I come",
-                "next_chapter": "budget_intro",
-                "impact": { "money": -10000, "happiness": 20, "risk": 15 },
-                "mentorText": "Living the high life feels good, but spending 30% of your salary on non-essentials immediately is risky!"
-            },
-            {
-                "id": "save_safe",
-                "text": "Save 50% for emergencies",
-                "next_chapter": "budget_intro",
-                "impact": { "money": 5000, "happiness": 5, "risk": -5 },
-                "mentorText": "Excellent choice! An emergency fund is the shield that protects your financial future."
-            },
-            {
-                "id": "invest_start",
-                "text": "Invest in a diversified portfolio",
-                "next_chapter": "investment_phase",
-                "impact": { "money": 0, "happiness": 0, "risk": 5 },
-                "mentorText": "Investing early is the best way to utilize compound interest. Let's see how it goes."
-            }
-        ]
-    },
-    "budget_intro": {
-        "id": "budget_intro",
-        "title": "The Grocery Dilemma",
-        "text": "You're at the supermarket. Organic imports look tempting, but the generic brands are much cheaper. You also have a gym membership renewal due.",
-        "speaker": "Narrator",
-        "background": "src/assets/restaurant.png",
-        "choices": [
-            {
-                "id": "organic",
-                "text": "Go organic and renew the gym",
-                "next_chapter": "investment_phase",
-                "impact": { "money": -1500, "happiness": 15, "risk": 5 },
-                "mentorText": "Health is wealth, but be mindful of your monthly recurring expenses. They add up!"
-            },
-            {
-                "id": "budget_save",
-                "text": "Stick to basics and skip the gym for now",
-                "next_chapter": "investment_phase",
-                "impact": { "money": 1000, "happiness": -10, "risk": -5 },
-                "mentorText": "Budgeting requires sacrifices. You're building a strong financial discipline."
-            }
-        ]
-    },
-    "investment_phase": {
-        "id": "investment_phase",
-        "title": "The Market Opportunity",
-        "text": "A new tech IPO is generating massive hype. Some say it's the next big thing, others say it's a bubble. What's your play?",
-        "speaker": "Mentor",
-        "background": "src/assets/trading.png",
-        "choices": [
-            {
-                "id": "go_all_in",
-                "text": "Go all in on the IPO",
-                "next_chapter": "scam_threat",
-                "is_random": true,
-                "impact_range": {
-                    "money": [-5000, 10000],
-                    "happiness": [-10, 20],
-                    "risk": [20, 40]
-                },
-                "mentorText": "IPO investing is pure speculation. You could strike gold or lose it all."
-            },
-            {
-                "id": "diversify",
-                "text": "Stick to low-cost Index Funds",
-                "next_chapter": "scam_threat",
-                "impact": { "money": 1000, "happiness": 5, "risk": -10 },
-                "mentorText": "Slow and steady wins the race. Index funds are the backbone of many successful portfolios."
-            }
-        ]
-    },
-    "scam_threat": {
-        "id": "scam_threat",
-        "title": "Urgent Security Alert",
-        "text": "You receive an email from your 'bank' stating your account has been compromised. It asks you to click a link and verify your credentials immediately.",
-        "speaker": "Narrator",
-        "background": "src/assets/office.png",
-        "choices": [
-            {
-                "id": "click_link",
-                "text": "Click the link and verify",
-                "next_chapter": "game_end",
-                "impact": { "money": -5000, "happiness": -30, "risk": 50 },
-                "mentorText": "Oh no! That was a phishing scam. Never click links in unexpected security alerts."
-            },
-            {
-                "id": "report_scam",
-                "text": "Ignore and report to official bank app",
-                "next_chapter": "game_end",
-                "impact": { "money": 0, "happiness": 10, "risk": -20 },
-                "mentorText": "Great job spotting the scam! Cybersecurity is a critical part of financial security."
-            }
-        ]
-    },
-    "game_end": {
-        "id": "game_end",
-        "title": "Quest Complete",
-        "text": "You've navigated the first month of your financial journey. Your choices have defined your future. Let's see your final ROI!",
-        "speaker": "Narrator",
-        "background": "src/assets/office.png",
-        "choices": []
-    }
+  "start": {
+    "id": "start",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "Congratulations! You've reached a new stage in life. Whether you're a student with pocket money or a working professional, learning to manage your ROI (Return on Investment) starts now.",
+    "choices": [
+      {
+        "id": "lvl1_intro",
+        "text": "Level 1: Pocket Money (Student)",
+        "next_chapter": "lvl1_scene1",
+        "mentorText": "Good choice. Starting small with pocket money is the best way to build saving habits."
+      },
+      {
+        "id": "lvl2_intro",
+        "text": "Level 2: Salary (Professional)",
+        "next_chapter": "lvl2_scene1",
+        "mentorText": "Jumping into the deep end! Salary management is where the real 50-30-20 rule comes into play."
+      }
+    ]
+  },
+  "lvl1_scene1": {
+    "id": "lvl1_scene1",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "Yay! You got ₹5000 as your pocket money this month. But remember—you shouldn't spend it all. You should save a part of it in an RD, a recurring deposit. It will help you in the future.",
+    "choices": [
+      {
+        "id": "rd_what",
+        "text": "What exactly is an RD?",
+        "next_chapter": "lvl1_rd_explain",
+        "impact": { "happiness": 5 }
+      }
+    ]
+  },
+  "lvl1_rd_explain": {
+    "id": "lvl1_rd_explain",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "An RD, or Recurring Deposit, is a way of saving money regularly. You deposit a fixed amount every month for a certain period. The bank gives you interest, so your money grows over time! It builds a habit of disciplined saving.",
+    "choices": [
+      {
+        "id": "rd_agree",
+        "text": "I'll save a little every month!",
+        "next_chapter": "lvl1_choice_month",
+        "impact": { "money": 0, "happiness": 5, "risk": -5 }
+      }
+    ]
+  },
+  "lvl1_choice_month": {
+    "id": "lvl1_choice_month",
+    "background": "src/assets/office.png",
+    "speaker": "System",
+    "text": "You have ₹5000 this month. What would you like to do? Choose how much you want to allocate.",
+    "choices": [
+      {
+        "id": "save_2000",
+        "text": "Save ₹2000 (Invest in RD)",
+        "next_chapter": "lvl1_scene2",
+        "impact": { "money": -2000, "happiness": 10, "risk": -10 },
+        "mentorText": "Smart! Saving 40% of your pocket money is an excellent start."
+      },
+      {
+        "id": "save_500",
+        "text": "Save ₹500 (Minimum RD)",
+        "next_chapter": "lvl1_scene2",
+        "impact": { "money": -500, "happiness": 5, "risk": 0 },
+        "mentorText": "It's a start, but you might find it hard to afford big trips later."
+      },
+      {
+        "id": "spend_all",
+        "text": "Spend it all! (Wants)",
+        "next_chapter": "lvl1_scene2",
+        "impact": { "money": 0, "happiness": 20, "risk": 15 },
+        "mentorText": "Careful... You have no safety net now."
+      }
+    ]
+  },
+  "lvl1_scene2": {
+    "id": "lvl1_scene2",
+    "background": "src/assets/restaurant.png",
+    "speaker": "Friend (Rahul)",
+    "avatar": "src/assets/char_friend_1_m.png",
+    "text": "Hey! We're going for a party this weekend, are you coming? It sounds fun... but should you spend your money on this?",
+    "choices": [
+      {
+        "id": "party_yes",
+        "text": "Yes, let's go! (₹1000)",
+        "next_chapter": "lvl1_scene3",
+        "impact": { "money": -1000, "happiness": 20, "risk": 5 },
+        "mentorText": "Enjoy the party, but watch your remaining balance."
+      },
+      {
+        "id": "party_no",
+        "text": "No, I'll pass this time.",
+        "next_chapter": "lvl1_scene3",
+        "impact": { "money": 0, "happiness": -5, "risk": -5 },
+        "mentorText": "Disciplined! You're keeping your goals in sight."
+      }
+    ]
+  },
+  "lvl1_scene3": {
+    "id": "lvl1_scene3",
+    "background": "src/assets/office.png",
+    "speaker": "Friend (Priya)",
+    "avatar": "src/assets/char_friend_2_f.png",
+    "text": "By the way, we're planning a trip after a few months! You should start saving from now so you can join us. Do you want to start saving for the trip?",
+    "choices": [
+      {
+        "id": "trip_save_yes",
+        "text": "Yes, count me in!",
+        "next_chapter": "lvl1_scene4",
+        "impact": { "money": -1000, "happiness": 10, "risk": -5 },
+        "mentorText": "Planning ahead is key to enjoying life without debt."
+      },
+      {
+        "id": "trip_save_no",
+        "text": "No, I can't afford it yet.",
+        "next_chapter": "lvl1_scene4",
+        "impact": { "money": 0, "happiness": -10, "risk": 0 },
+        "mentorText": "It's okay to say no when the budget is tight."
+      }
+    ]
+  },
+  "lvl1_scene4": {
+    "id": "lvl1_scene4",
+    "background": "src/assets/office.png",
+    "speaker": "Teacher",
+    "avatar": "src/assets/char_father.png",
+    "text": "You have been assigned a project. Make sure you complete it on time. You'll need to buy materials for this project. This is a NEED. Money will be spent from your budget.",
+    "choices": [
+      {
+        "id": "proj_materials",
+        "text": "Buy materials (₹500)",
+        "next_chapter": "lvl1_summary",
+        "impact": { "money": -500, "happiness": 5, "risk": -5 },
+        "mentorText": "Always prioritize 'Needs' like education and essentials."
+      }
+    ]
+  },
+  "lvl1_summary": {
+    "id": "lvl1_summary",
+    "background": "src/assets/trading.png",
+    "speaker": "System",
+    "text": "6 months have passed. Time period completed. Here is your summary. Let's see if you saved enough for the trip!",
+    "choices": [
+      {
+        "id": "trip_time",
+        "text": "Check Savings for Trip",
+        "next_chapter": "lvl1_trip_check"
+      }
+    ]
+  },
+  "lvl1_trip_check": {
+    "id": "lvl1_trip_check",
+    "background": "src/assets/trading.png",
+    "speaker": "Friends",
+    "avatar": "src/assets/char_friend_1_m.png",
+    "text": "We're all going on the trip now! Are you coming? (Checking your total balance...)",
+    "choices": [
+      {
+        "id": "trip_outcome",
+        "text": "View Outcome",
+        "next_chapter": "lvl2_scene1",
+        "impact": { "money": 0 },
+        "is_random": true,
+        "impact_range": {
+          "money": [0, 0],
+          "happiness": [0, 0],
+          "risk": [0, 0]
+        }
+      }
+    ]
+  },
+  "lvl2_scene1": {
+    "id": "lvl2_scene1",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "You just received your first salary — ₹50,000! Congratulations. Now it's time to learn how to manage it using the 50-30-20 rule.",
+    "choices": [
+      {
+        "id": "what_rule",
+        "text": "What's the 50-30-20 rule?",
+        "next_chapter": "lvl2_rule_explain"
+      }
+    ]
+  },
+  "lvl2_rule_explain": {
+    "id": "lvl2_rule_explain",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "It means dividing your income into three parts: 50% for Needs (rent, food), 30% for Wants (fun, shopping), and 20% for Savings. For ₹50,000, that's ₹25k on needs, ₹15k on wants, and ₹10k for savings.",
+    "choices": [
+      {
+        "id": "rule_apply",
+        "text": "That sounds like a good plan!",
+        "next_chapter": "lvl2_emi_trap"
+      }
+    ]
+  },
+  "lvl2_emi_trap": {
+    "id": "lvl2_emi_trap",
+    "background": "src/assets/restaurant.png",
+    "speaker": "Friend (Rahul)",
+    "avatar": "src/assets/char_friend_1_m.png",
+    "text": "A new phone just launched! You can buy it on ₹5,000 EMI every month. That seems affordable, right?",
+    "choices": [
+      {
+        "id": "emi_yes",
+        "text": "Buy the phone on EMI",
+        "next_chapter": "lvl2_needs_wants",
+        "impact": { "money": -5000, "happiness": 20, "risk": 15 },
+        "mentorText": "Watch out! Multiple EMIs can become a trap and reduce your monthly cash flow."
+      },
+      {
+        "id": "emi_no",
+        "text": "No, I'll save up instead",
+        "next_chapter": "lvl2_needs_wants",
+        "impact": { "money": 0, "happiness": -5, "risk": -10 },
+        "mentorText": "Smart. Avoiding debts is the first rule of wealth building."
+      }
+    ]
+  },
+  "lvl2_needs_wants": {
+    "id": "lvl2_needs_wants",
+    "background": "src/assets/office.png",
+    "speaker": "System",
+    "text": "I need to manage my expenses wisely. Classify the following: Rent, Groceries (NEEDS) vs Gaming console, Movie night (WANTS). Needs should always come first.",
+    "choices": [
+      {
+        "id": "prioritize_needs",
+        "text": "Prioritize Rent & Groceries",
+        "next_chapter": "lvl2_emergencies",
+        "impact": { "money": -30000, "happiness": 10, "risk": -15 },
+        "mentorText": "Excellent. Covering essentials first ensures peace of mind."
+      }
+    ]
+  },
+  "lvl2_emergencies": {
+    "id": "lvl2_emergencies",
+    "background": "src/assets/office.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "You should also build an emergency fund. Unexpected expenses can happen anytime. Savings help you handle them without stress.",
+    "choices": [
+      {
+        "id": "save_emergency",
+        "text": "Add ₹10,000 to Emergency Fund",
+        "next_chapter": "final_summary",
+        "impact": { "money": -10000, "happiness": 5, "risk": -20 },
+        "mentorText": "This is your financial shield. Never skip building this fund."
+      }
+    ]
+  },
+  "final_summary": {
+    "id": "final_summary",
+    "background": "src/assets/trading.png",
+    "speaker": "System",
+    "text": "Lesson Learned: Follow the 50-30-20 rule, avoid the EMI trap, understand needs vs wants, and save regularly. You have mastered the basics of ROI!",
+    "choices": []
+  }
 }

@@ -12,7 +12,7 @@ export const Dashboard = (app) => {
             <div class="stat-card glass" style="padding: 20px; text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 10px;">💰</div>
                 <div style="color: var(--neutral); font-size: 0.9rem;">Total Balance</div>
-                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">$${app.state.stats.money}</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">₹${app.state.stats.money}</div>
             </div>
             <div class="stat-card glass" style="padding: 20px; text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 10px;">😊</div>

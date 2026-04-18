@@ -6,7 +6,8 @@ export const Gameplay = (app, node) => {
     div.style.width = '100%';
     div.style.height = '100vh';
 
-    const avatarImg = app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png';
+    const avatarImg = node.avatar || (app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png');
+    const isPlayer = !node.avatar;
 
     div.innerHTML = `
         <div class="game-bg" style="background-image: url('${node.background}');"></div>
@@ -15,7 +16,7 @@ export const Gameplay = (app, node) => {
             <div class="brand" style="color: var(--primary); font-size: 1.2rem;">ROI</div>
             <div class="stats-container">
                 <div class="stat-item glass" title="Money">
-                    💰 <span>Money:</span> $${app.state.stats.money}
+                    💰 <span>Money:</span> ₹${app.state.stats.money}
                 </div>
                 <div class="stat-item glass" title="Happiness">
                     😊 <span>Happiness:</span> ${app.state.stats.happiness}%
@@ -28,7 +29,7 @@ export const Gameplay = (app, node) => {
         </div>
 
         <div class="avatar-display" style="position: fixed; bottom: 0; left: 5%; width: 500px; z-index: 5; pointer-events: none;">
-            <img id="avatar-img" src="${avatarImg}" alt="Avatar" style="width: 100%; height: auto; transform: scaleX(${app.state.user.gender === 'female' ? -1 : 1}); filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4)); opacity: 0; transition: opacity 0.5s ease;">
+            <img id="avatar-img" src="${avatarImg}" alt="Avatar" style="width: 100%; height: auto; transform: scaleX(${isPlayer && app.state.user.gender === 'female' ? -1 : 1}); filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4)); opacity: 0; transition: opacity 0.5s ease;">
         </div>
 
         <div class="dialogue-box-container fade-in">
@@ -53,8 +54,9 @@ export const Gameplay = (app, node) => {
 
     // Process Background Removal
     const avatarImgElement = div.querySelector('#avatar-img');
-    const isFemale = app.state.user.gender === 'female';
-    removeImageBackground(avatarImg, isFemale).then(processedSrc => {
+    // Rule for checkerboard: our new assets use white backgrounds, original female uses checkerboard
+    const isCheckerboard = isPlayer && app.state.user.gender === 'female';
+    removeImageBackground(avatarImg, isCheckerboard).then(processedSrc => {
         avatarImgElement.src = processedSrc;
         avatarImgElement.style.opacity = '1';
     });
