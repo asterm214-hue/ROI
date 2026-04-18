@@ -1,15 +1,15 @@
 import os
 import json
 import random
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from models import db, User
 
-app = Flask(__name__)
-# Enable CORS for frontend integration
+# Initialize Flask with the root directory as the static folder to serve frontend files
+app = Flask(__name__, static_folder='.', static_url_path='')
+# Enable CORS just in case, though not strictly needed if served from same port
 CORS(app)
 
-# Database configuration
 # base directory for absolute paths
 _base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,12 +23,23 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# --- FRONTEND ROUTES ---
+
 @app.route('/')
-def home():
-    return jsonify({
-        "status": "online",
-        "message": "ROI Backend API is running. Please access the game via the frontend server (usually port 8080 or 5500)."
-    })
+def index():
+    """Serve the main index.html file."""
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve any other static files (js, css, assets)."""
+    return send_from_directory(app.static_folder, path)
+
+# --- API ROUTES ---
+
+@app.route('/api/status')
+def status():
+    return jsonify({"status": "online", "message": "ROI API is running"})
 
 # Load Scenarios
 with open(os.path.join(_base_dir, 'scenarios.json'), 'r') as f:
@@ -46,14 +57,59 @@ def get_mentor_feedback(user):
         return "Impressive wealth accumulation! You're well on your way to becoming a financial pro."
     return "Good financial management! Keep balancing your stats."
 
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    gender = data.get('gender', 'male')
+
+    if not email or not password or not name:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email already registered"}), 400
+
+    new_user = User(name=name, email=email, gender=gender)
+    new_user.set_password(password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "user": new_user.to_dict(),
+        "first_scenario": SCENARIOS['start']
+    })
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "Missing email or password"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    return jsonify({
+        "status": "success",
+        "user": user.to_dict(),
+        "current_scenario": SCENARIOS.get(user.current_chapter, SCENARIOS['start'])
+    })
+
 @app.route('/start', methods=['POST'])
 def start_game():
     data = request.json
     name = data.get('name', 'Adam')
+    email = data.get('email', f"guest_{random.randint(1000,9999)}@example.com")
     gender = data.get('gender', 'male')
     
-    # Create new user
-    new_user = User(name=name, gender=gender)
+    new_user = User(name=name, email=email, gender=gender)
+    new_user.set_password("guest_pass")
     db.session.add(new_user)
     db.session.commit()
     
@@ -124,5 +180,9 @@ def get_user(user_id):
     return jsonify(user.to_dict())
 
 if __name__ == '__main__':
-    # Running on 5001 to avoid clash with common ports
+    # Running on 5001 for both Frontend and Backend
+    print("\n" + "="*50)
+    print("ROI GAME IS STARTING!")
+    print("Open your browser at: http://127.0.0.1:5001")
+    print("="*50 + "\n")
     app.run(debug=True, port=5001)

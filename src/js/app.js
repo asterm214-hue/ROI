@@ -20,7 +20,7 @@ class App {
             history: []
         };
         
-        this.apiBase = 'http://localhost:5001';
+        this.apiBase = window.location.origin;
         this.init();
     }
 
@@ -47,14 +47,16 @@ class App {
         }
     }
 
-    async startGame(userData) {
+    async signUp(userData) {
         try {
-            const response = await fetch(`${this.apiBase}/start`, {
+            const response = await fetch(`${this.apiBase}/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userData)
             });
             const data = await response.json();
+            if (data.error) throw new Error(data.error);
+
             this.state.user = data.user;
             this.state.stats = {
                 money: data.user.money,
@@ -62,12 +64,49 @@ class App {
                 risk: data.user.risk
             };
             this.state.currentScenario = data.first_scenario;
-            this.state.currentChapter = data.first_scenario.id;
+            this.state.currentChapter = data.user.current_chapter;
             this.setView('intro');
         } catch (error) {
-            console.error('Failed to start game:', error);
-            alert('Backend server not responding. Please ensure Flask is running on port 5001.');
+            console.error('Signup failed:', error);
+            alert(error.message || 'Signup failed');
         }
+    }
+
+    async logIn(credentials) {
+        try {
+            const response = await fetch(`${this.apiBase}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credentials)
+            });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+
+            this.state.user = data.user;
+            this.state.stats = {
+                money: data.user.money,
+                happiness: data.user.happiness,
+                risk: data.user.risk
+            };
+            this.state.currentScenario = data.current_scenario;
+            this.state.currentChapter = data.user.current_chapter;
+            
+            // If user is returning, skip intro, otherwise go to intro
+            const view = data.user.current_chapter === 'start' ? 'intro' : 'gameplay';
+            this.setView(view);
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert(error.message || 'Login failed. Check your credentials.');
+        }
+    }
+
+    logout() {
+        this.state.user = null;
+        this.state.stats = { money: 0, happiness: 0, risk: 0 };
+        this.state.currentChapter = 'start';
+        this.state.currentScenario = null;
+        this.state.history = [];
+        this.setView('auth');
     }
 
     async handleChoice(choiceId) {

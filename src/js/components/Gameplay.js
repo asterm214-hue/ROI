@@ -23,6 +23,7 @@ export const Gameplay = (app, node) => {
                 <div class="stat-item glass" title="Risk">
                     ⚠️ <span>Risk:</span> ${app.state.stats.risk}%
                 </div>
+                <button id="logout-btn" class="btn glass-btn" style="padding: 5px 12px; font-size: 0.8rem; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3); color: #d63031;">Logout</button>
             </div>
         </div>
 
@@ -85,6 +86,8 @@ export const Gameplay = (app, node) => {
             location.reload();
         };
     }
+
+    div.querySelector('#logout-btn').onclick = () => app.logout();
 
     return div;
 };

@@ -39,12 +39,17 @@ export const Dashboard = (app) => {
             </div>
         </div>
 
-        <button id="resume-story" class="btn btn-primary" style="width: 100%; margin-top: 30px;">Resume Quest</button>
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <button id="resume-story" class="btn btn-primary" style="flex: 2;">Resume Quest</button>
+            <button id="logout-btn-dash" class="btn" style="flex: 1; background: #ffeaa7; color: #d63031; font-weight: 700;">Logout</button>
+        </div>
     `;
 
     div.querySelector('#resume-story').onclick = () => {
         app.setView('gameplay');
     };
+
+    div.querySelector('#logout-btn-dash').onclick = () => app.logout();
 
     return div;
 };

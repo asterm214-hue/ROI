@@ -15,7 +15,7 @@ export const Auth = (app) => {
 
         <!-- Title pill -->
         <div class="auth-title-pill">
-            <span class="brand-fin">FinSecure</span><span class="brand-quest"> Quest</span>
+            <span class="brand-fin">ROI</span>
         </div>
 
         <!-- Main layout: character left | card | character right -->
@@ -117,15 +117,34 @@ export const Auth = (app) => {
     });
 
     // ── Form submit ────────────────────────────────────────────
-    const form = wrapper.querySelector('#auth-form');
-    const doStart = () => app.startGame({
-        name:   nameInput.value  || (selectedGender === 'male' ? 'Adam' : 'Eve'),
-        email:  emailInput.value || 'player@finsecure.quest',
-        gender: selectedGender
+    const form          = wrapper.querySelector('#auth-form');
+    const passwordInput = wrapper.querySelector('#auth-password');
+
+    const getFormData = () => ({
+        name:     nameInput.value  || (selectedGender === 'male' ? 'Adam' : 'Eve'),
+        email:    emailInput.value,
+        password: passwordInput.value,
+        gender:   selectedGender
     });
 
-    form.addEventListener('submit', (e) => { e.preventDefault(); doStart(); });
-    wrapper.querySelector('#btn-signup').addEventListener('click', doStart);
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = getFormData();
+        if (!data.email || !data.password) {
+            alert('Please enter your email and password to log in.');
+            return;
+        }
+        app.logIn({ email: data.email, password: data.password });
+    });
+
+    wrapper.querySelector('#btn-signup').addEventListener('click', () => {
+        const data = getFormData();
+        if (!data.email || !data.password || !data.name) {
+            alert('Please fill out Name, Email, and Password to sign up.');
+            return;
+        }
+        app.signUp(data);
+    });
 
     return wrapper;
 };
