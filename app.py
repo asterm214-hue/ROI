@@ -193,6 +193,12 @@ def submit_choice():
             completed_lvl = 'lvl1'
         elif current.startswith('lvl2'):
             completed_lvl = 'lvl2'
+        elif current.startswith('lvl3'):
+            completed_lvl = 'lvl3'
+        elif current.startswith('lvl4'):
+            completed_lvl = 'lvl4'
+        elif current.startswith('lvl5'):
+            completed_lvl = 'lvl5'
         else:
             completed_lvl = None
             
