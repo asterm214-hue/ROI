@@ -12,14 +12,14 @@ export const Feedback = (app, historyItem) => {
         <h2 style="color: var(--accent); margin-bottom: 10px;">Outcome: ${historyItem.choice}</h2>
         
         <div class="stats-change" style="display: flex; justify-content: space-around; padding: 20px; background: rgba(0,0,0,0.05); border-radius: var(--radius-md); margin-bottom: 30px;">
-            <div style="color: ${impact.money >= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Money: ${impact.money >= 0 ? '+' : ''}${impact.money}
+            <div style="color: ${(impact.money || 0) >= 0 ? 'green' : 'red'}; font-weight: 700;">
+                Money: ${(impact.money || 0) >= 0 ? '+' : ''}${impact.money || 0}
             </div>
-            <div style="color: ${impact.happiness >= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Happiness: ${impact.happiness >= 0 ? '+' : ''}${impact.happiness}%
+            <div style="color: ${(impact.happiness || 0) >= 0 ? 'green' : 'red'}; font-weight: 700;">
+                Happiness: ${(impact.happiness || 0) >= 0 ? '+' : ''}${impact.happiness || 0}%
             </div>
-            <div style="color: ${impact.risk <= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Risk: ${impact.risk >= 0 ? '+' : ''}${impact.risk}%
+            <div style="color: ${(impact.risk || 0) <= 0 ? 'green' : 'red'}; font-weight: 700;">
+                Risk: ${(impact.risk || 0) >= 0 ? '+' : ''}${impact.risk || 0}%
             </div>
         </div>
 

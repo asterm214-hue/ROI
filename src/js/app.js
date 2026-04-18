@@ -18,11 +18,35 @@ class App {
             },
             currentChapter: 'start',
             currentScenario: null,
+            completed_levels: [],
             history: []
         };
         
         this.apiBase = window.location.origin;
+        this.loadState();
         this.init();
+    }
+
+    saveState() {
+        localStorage.setItem('roi_state', JSON.stringify({
+            user: this.state.user,
+            stats: this.state.stats,
+            currentChapter: this.state.currentChapter,
+            currentScenario: this.state.currentScenario,
+            completed_levels: this.state.completed_levels
+        }));
+    }
+
+    loadState() {
+        const saved = localStorage.getItem('roi_state');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            this.state.user = parsed.user;
+            this.state.stats = parsed.stats;
+            this.state.currentChapter = parsed.currentChapter;
+            this.state.currentScenario = parsed.currentScenario;
+            this.state.completed_levels = parsed.completed_levels || [];
+        }
     }
 
     init() {
@@ -39,16 +63,38 @@ class App {
         if (pushHistory) {
             history.pushState({ view }, '', `#${view}`);
         }
+        this.saveState();
         this.render();
         window.scrollTo(0, 0);
     }
 
     async startLevel(chapterId) {
         try {
-            const response = await fetch(`${this.apiBase}/scenario/${chapterId}`);
+            // Set starting stats based on level
+            let startStats = { money: 0, happiness: 50, risk: 10 };
+            if (chapterId.startsWith('lvl1')) startStats.money = 5000;
+            else if (chapterId.startsWith('lvl2')) startStats.money = 50000;
+            else if (chapterId.startsWith('lvl3')) startStats.money = 500000;
+
+            const response = await fetch(`${this.apiBase}/start-level`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.state.user.id,
+                    chapter_id: chapterId,
+                    stats: startStats
+                })
+            });
             const data = await response.json();
-            this.state.currentScenario = data;
+            
+            this.state.currentScenario = data.scenario;
             this.state.currentChapter = chapterId;
+            this.state.stats = {
+                money: data.user.money,
+                happiness: data.user.happiness,
+                risk: data.user.risk
+            };
+            this.saveState();
             this.setView('intro');
         } catch (error) {
             console.error('Failed to load level:', error);
@@ -77,6 +123,7 @@ class App {
                 happiness: data.user.happiness,
                 risk: data.user.risk
             };
+            this.state.completed_levels = data.user.completed_levels || [];
             this.state.currentScenario = data.first_scenario;
             this.state.currentChapter = data.user.current_chapter;
             this.setView('map');
@@ -102,6 +149,7 @@ class App {
                 happiness: data.user.happiness,
                 risk: data.user.risk
             };
+            this.state.completed_levels = data.user.completed_levels || [];
             this.state.currentScenario = data.current_scenario;
             this.state.currentChapter = data.user.current_chapter;
             
@@ -114,6 +162,7 @@ class App {
     }
 
     logout() {
+        localStorage.removeItem('roi_state');
         this.state.user = null;
         this.state.stats = { money: 0, happiness: 0, risk: 0 };
         this.state.currentChapter = 'start';
@@ -139,6 +188,7 @@ class App {
                 happiness: data.user.happiness,
                 risk: data.user.risk
             };
+            this.state.completed_levels = data.user.completed_levels || [];
 
             this.state.history.push({
                 node: this.state.currentChapter,
@@ -149,7 +199,16 @@ class App {
             });
 
             this.state.pendingScenario = data.next_scenario;
-            this.setView('feedback');
+            
+            // Skip feedback if no impact and no mentor text
+            const hasImpact = data.impact && (data.impact.money || data.impact.happiness || data.impact.risk);
+            const hasMentor = data.mentor_opinion;
+            
+            if (!hasImpact && !hasMentor) {
+                this.continueStory();
+            } else {
+                this.setView('feedback');
+            }
         } catch (error) {
             console.error('Failed to submit choice:', error);
         }
@@ -160,12 +219,24 @@ class App {
             this.state.currentScenario = this.state.pendingScenario;
             this.state.currentChapter = this.state.pendingScenario.id;
             this.state.pendingScenario = null;
+            
+            // If the next scenario is the 'start' (Map) or a summary, potentially redirect
+            if (this.state.currentChapter === 'start' || this.state.currentChapter === 'final_summary') {
+                this.setView('map');
+                return;
+            }
         }
         this.setView('gameplay');
     }
 
     render() {
         this.container.innerHTML = '';
+        
+        // Redirect to auth if no user is present
+        if (!this.state.user && this.state.view !== 'auth') {
+            this.state.view = 'auth';
+        }
+
         const viewMap = {
             auth: () => Auth(this),
             map: () => Map(this),

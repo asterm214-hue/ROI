@@ -1,3 +1,4 @@
+import json
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -13,6 +14,7 @@ class User(db.Model):
     happiness = db.Column(db.Integer, default=50)
     risk = db.Column(db.Integer, default=10)
     current_chapter = db.Column(db.String(50), default='start')
+    completed_levels = db.Column(db.String(200), default='[]')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -29,5 +31,6 @@ class User(db.Model):
             "money": self.money,
             "happiness": self.happiness,
             "risk": self.risk,
-            "current_chapter": self.current_chapter
+            "current_chapter": self.current_chapter,
+            "completed_levels": json.loads(self.completed_levels) if self.completed_levels else []
         }

@@ -18,6 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(_base_dir, 'da
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+app.config['JSON_AS_ASCII'] = False
 
 # Create database if it doesn't exist
 with app.app_context():
@@ -125,6 +126,29 @@ def get_scenario(chapter_id):
         return jsonify({"error": "Scenario not found"}), 404
     return jsonify(scenario)
 
+@app.route('/start-level', methods=['POST'])
+def start_level_sync():
+    data = request.json
+    user_id = data.get('user_id')
+    chapter_id = data.get('chapter_id')
+    stats = data.get('stats', {})
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    user.current_chapter = chapter_id
+    user.money = stats.get('money', user.money)
+    user.happiness = stats.get('happiness', user.happiness)
+    user.risk = stats.get('risk', user.risk)
+    db.session.commit()
+    
+    return jsonify({
+        "status": "success",
+        "user": user.to_dict(),
+        "scenario": SCENARIOS.get(chapter_id)
+    })
+
 @app.route('/choice', methods=['POST'])
 def submit_choice():
     data = request.json
@@ -160,7 +184,32 @@ def submit_choice():
     
     # Update Chapter
     next_node = selected_choice['next_chapter']
-    user.current_chapter = next_node
+    
+    # Check if a level is being completed
+    if next_node == 'start' or next_node == 'final_summary':
+        # Identify which level was completed
+        current = user.current_chapter
+        if current.startswith('lvl1'):
+            completed_lvl = 'lvl1'
+        elif current.startswith('lvl2'):
+            completed_lvl = 'lvl2'
+        else:
+            completed_lvl = None
+            
+        if completed_lvl:
+            completed_list = json.loads(user.completed_levels)
+            if completed_lvl not in completed_list:
+                completed_list.append(completed_lvl)
+                user.completed_levels = json.dumps(completed_list)
+        
+        # Reset current chapter if going back to start
+        if next_node == 'start':
+            user.current_chapter = 'start'
+        else:
+            user.current_chapter = next_node
+    else:
+        user.current_chapter = next_node
+        
     db.session.commit()
     
     return jsonify({

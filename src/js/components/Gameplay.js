@@ -6,8 +6,12 @@ export const Gameplay = (app, node) => {
     div.style.width = '100%';
     div.style.height = '100vh';
 
-    const avatarImg = node.avatar || (app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png');
-    const isPlayer = !node.avatar;
+    const avatarImg = node && node.avatar ? node.avatar : (app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png');
+    const isPlayer = !node || !node.avatar;
+
+    if (!node) {
+        return Intro(app); // Fallback to intro if node is missing
+    }
 
     div.innerHTML = `
         <div class="game-bg" style="background-image: url('${node.background}');"></div>
@@ -46,7 +50,8 @@ export const Gameplay = (app, node) => {
                 </div>
 
                 ${node.choices.length === 0 ? `
-                    <button id="restart-btn" class="btn btn-primary" style="margin-top: 20px;">The End - Restart Quest</button>
+                    <button id="map-btn" class="btn btn-primary" style="margin-top: 20px;">Return to Map</button>
+                    <button id="restart-btn" class="btn glass-btn" style="margin-top: 10px; opacity: 0.6;">Restart Quest</button>
                 ` : ''}
             </div>
         </div>
@@ -83,9 +88,16 @@ export const Gameplay = (app, node) => {
         };
     });
 
+    if (div.querySelector('#map-btn')) {
+        div.querySelector('#map-btn').onclick = () => {
+            app.setView('map');
+        };
+    }
+
     if (div.querySelector('#restart-btn')) {
         div.querySelector('#restart-btn').onclick = () => {
-            location.reload();
+            app.state.currentChapter = app.state.view === 'gameplay' && node.id.startsWith('lvl1') ? 'lvl1_scene1' : 'lvl2_scene1';
+            app.startLevel(app.state.currentChapter);
         };
     }
 

@@ -9,11 +9,19 @@ export const Intro = (app) => {
 
     const avatarImg = app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png';
 
-    const isLvl1 = app.state.currentChapter.startsWith('lvl1');
-    const questTitle = isLvl1 ? 'Student Pocket Money Quest' : 'Salary Management Quest';
+    const chapter = app.state.currentChapter || 'start';
+    const isLvl1 = chapter.startsWith('lvl1');
+    const isLvl2 = chapter.startsWith('lvl2');
+    const isLvl3 = chapter.startsWith('lvl3');
+    
+    const questTitle = isLvl1 ? 'Level 1: Student Pocket Money Quest' : (isLvl2 ? 'Level 2: Salary Management Quest' : (isLvl3 ? 'Level 3: The Investment Quest' : 'Return on Investment Quest'));
     const questDesc = isLvl1 
-        ? 'You have just received your pocket money. It is time to learn how to manage small savings like RD and prioritize needs over wants before your big college trip!'
-        : 'Congratulations on your first salary! You are now a young professional. Learn to apply the 50-30-20 rule and avoid common debt traps like EMI offers.';
+        ? 'You have just received your monthly pocket money. It is time to learn how to manage small savings like RD and prioritize needs over wants before your big college trip! Can you save ₹8,000 in 6 months?'
+        : (isLvl2 
+            ? 'Congratulations on your first salary of ₹50,000! You are now a young professional. Learn to apply the 50-30-20 rule, avoid debt traps like EMIs, and build an emergency fund for unexpected life events.'
+            : (isLvl3
+                ? 'Your money is safe in the bank, but is it reaching its full potential? In this quest, you will learn the crucial difference between Debit and Credit cards, understand how interest works, and dive into the world of smart investing with FD, Mutual Funds, and Stocks.'
+                : 'Welcome to your financial journey. Choose a level from the map to begin learning about money management and investment.'));
 
     div.innerHTML = `
         <div class="avatar-container" style="margin-bottom: 25px;">
