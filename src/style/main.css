@@ -1,0 +1,428 @@
+/* Design System Definitions */
+:root {
+    --primary: #17BEBB;
+    --secondary: #6AD5CB;
+    --accent: #0F4C5C;
+    --neutral: #8A8A8A;
+    --bg-color: #F5F5F5;
+    --dark: #1F2A2C;
+    --white: #FFFFFF;
+    
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.2s ease;
+    
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, .brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+}
+
+/* App Container */
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#view-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+}
+
+/* Glassmorphism Classes */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Glass Buttons */
+.btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 190, 187, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: var(--accent);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline.active {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* Input Styles */
+.input-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--white);
+    font-family: inherit;
+    transition: var(--transition-fast);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23, 190, 187, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-slow);
+}
+
+/* Gameplay Specifics */
+.game-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
+    transition: var(--transition-slow);
+    filter: brightness(0.7);
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.stats-container {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-item {
+    padding: 8px 16px;
+    border-radius: var(--radius-lg);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.dialogue-box-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 800px;
+}
+
+.dialogue-box {
+    padding: 25px;
+    min-height: 150px;
+}
+
+.choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.choice-btn {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .dialogue-box-container {
+        width: 95%;
+        bottom: 20px;
+    }
+    
+    .stat-item span {
+        display: none;
+    }
+
+    .avatar-display {
+        width: 300px !important;
+        bottom: 0px !important;
+        left: 0% !important;
+    }
+
+    .top-bar {
+        padding: 10px 15px;
+    }
+
+    .stats-container {
+        gap: 8px;
+    }
+
+    .stat-item {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ════════════════════════════════════════════
+   AUTH / LOGIN PAGE  –  FinSecure Quest Style
+   ════════════════════════════════════════════ */
+
+.auth-scene {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.auth-bg {
+    position: absolute;
+    inset: 0;
+    background: url('../assets/login_bg.png') center/cover no-repeat;
+    filter: brightness(0.88) saturate(1.1);
+    z-index: 0;
+}
+
+.auth-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,80,92,0.18) 0%, rgba(23,190,187,0.08) 50%, rgba(10,60,72,0.35) 100%);
+}
+
+.auth-particles {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+.auth-particles span {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(106,213,203,0.55);
+    animation: floatUp 7s infinite ease-in-out;
+}
+.auth-particles span:nth-child(1) { left:10%; animation-delay:0s;   width:8px;  height:8px;  }
+.auth-particles span:nth-child(2) { left:25%; animation-delay:1.5s; width:5px;  height:5px;  }
+.auth-particles span:nth-child(3) { left:55%; animation-delay:3s;   width:10px; height:10px; }
+.auth-particles span:nth-child(4) { left:75%; animation-delay:0.8s; width:6px;  height:6px;  }
+.auth-particles span:nth-child(5) { left:88%; animation-delay:2.2s; width:4px;  height:4px;  }
+@keyframes floatUp {
+    0%   { transform:translateY(110vh) scale(1);   opacity:0; }
+    10%  { opacity:0.8; }
+    90%  { opacity:0.5; }
+    100% { transform:translateY(-10vh) scale(1.2); opacity:0; }
+}
+
+.auth-title-pill {
+    position: relative;
+    z-index: 10;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 50px;
+    padding: 10px 36px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    box-shadow: 0 4px 24px rgba(23,190,187,0.18);
+    margin-bottom: 28px;
+    user-select: none;
+}
+.brand-fin   { color: #0a5068; }
+.brand-quest { color: #17BEBB; font-style: italic; }
+
+.auth-layout {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    max-width: 980px;
+    padding: 0 16px;
+}
+
+.auth-character {
+    flex: 0 0 260px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.22));
+}
+.auth-char-left  { margin-right: -18px; }
+.auth-char-right { transform: scaleX(-1); margin-left: -18px; }
+.auth-character img {
+    max-height: 420px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.auth-card {
+    flex: 0 0 340px;
+    background: rgba(255,255,255,0.68);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255,255,255,0.55);
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(23,190,187,0.14), 0 2px 8px rgba(0,0,0,0.08);
+    padding: 32px 30px 28px;
+    z-index: 5;
+}
+
+.auth-field { margin-bottom: 14px; }
+.auth-field input {
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 50px;
+    border: 1.5px solid rgba(23,190,187,0.3);
+    background: rgba(255,255,255,0.72);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: #1a3a42;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+.auth-field input::placeholder { color: #6eb8c0; }
+.auth-field input:focus {
+    border-color: #17BEBB;
+    box-shadow: 0 0 0 3px rgba(23,190,187,0.15);
+    background: rgba(255,255,255,0.92);
+}
+
+.auth-gender-row { display:flex; gap:10px; margin-bottom:4px; }
+.gender-tile {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(23,190,187,0.35);
+    background: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+}
+.gender-tile:hover { border-color:#17BEBB; background:rgba(23,190,187,0.08); }
+.gender-tile.active { background:#17BEBB; border-color:#17BEBB; color:#fff; box-shadow:0 4px 14px rgba(23,190,187,0.35); }
+.gender-icon { width:22px; height:22px; flex-shrink:0; color:inherit; }
+.gender-label { font-size:0.85rem; font-weight:700; line-height:1.1; }
+.gender-name  { font-size:0.75rem; opacity:0.75; font-weight:500; }
+.gender-tile:not(.active) .gender-icon  { color:#17BEBB; }
+.gender-tile:not(.active) .gender-label { color:#0a5068; }
+.gender-tile:not(.active) .gender-name  { color:#5aa8b2; }
+
+.auth-or {
+    display:flex; align-items:center; gap:10px;
+    margin:14px 0 12px; color:#7ab8c0; font-size:0.85rem;
+}
+.auth-or::before,.auth-or::after {
+    content:''; flex:1; height:1px; background:rgba(23,190,187,0.25);
+}
+
+.auth-actions { display:flex; gap:10px; }
+.auth-btn {
+    flex:1; padding:13px 10px; border-radius:50px; border:none;
+    font-family:'Outfit',sans-serif; font-size:1rem; font-weight:700; cursor:pointer;
+    background:#17BEBB; color:#fff;
+    box-shadow:0 4px 16px rgba(23,190,187,0.28);
+    transition:all 0.22s ease;
+}
+.auth-btn:hover { background:#13a8a6; transform:translateY(-2px); box-shadow:0 6px 20px rgba(23,190,187,0.38); }
+
+@media (max-width:768px) {
+    .auth-character { display:none; }
+    .auth-card { flex:0 0 90vw; padding:28px 22px; }
+    .auth-title-pill { font-size:1.3rem; padding:8px 24px; }
+}

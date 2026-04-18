@@ -1,0 +1,114 @@
+{
+    "start": {
+        "id": "start",
+        "title": "First Salary",
+        "text": "Your first paycheck of $30,000 just hit your account! This is the moment you've been waiting for. How will you allocate it?",
+        "speaker": "Narrator",
+        "background": "src/assets/office.png",
+        "choices": [
+            {
+                "id": "spend_all",
+                "text": "Splurge! New lifestyle, here I come",
+                "next_chapter": "budget_intro",
+                "impact": { "money": -10000, "happiness": 20, "risk": 15 },
+                "mentorText": "Living the high life feels good, but spending 30% of your salary on non-essentials immediately is risky!"
+            },
+            {
+                "id": "save_safe",
+                "text": "Save 50% for emergencies",
+                "next_chapter": "budget_intro",
+                "impact": { "money": 5000, "happiness": 5, "risk": -5 },
+                "mentorText": "Excellent choice! An emergency fund is the shield that protects your financial future."
+            },
+            {
+                "id": "invest_start",
+                "text": "Invest in a diversified portfolio",
+                "next_chapter": "investment_phase",
+                "impact": { "money": 0, "happiness": 0, "risk": 5 },
+                "mentorText": "Investing early is the best way to utilize compound interest. Let's see how it goes."
+            }
+        ]
+    },
+    "budget_intro": {
+        "id": "budget_intro",
+        "title": "The Grocery Dilemma",
+        "text": "You're at the supermarket. Organic imports look tempting, but the generic brands are much cheaper. You also have a gym membership renewal due.",
+        "speaker": "Narrator",
+        "background": "src/assets/restaurant.png",
+        "choices": [
+            {
+                "id": "organic",
+                "text": "Go organic and renew the gym",
+                "next_chapter": "investment_phase",
+                "impact": { "money": -1500, "happiness": 15, "risk": 5 },
+                "mentorText": "Health is wealth, but be mindful of your monthly recurring expenses. They add up!"
+            },
+            {
+                "id": "budget_save",
+                "text": "Stick to basics and skip the gym for now",
+                "next_chapter": "investment_phase",
+                "impact": { "money": 1000, "happiness": -10, "risk": -5 },
+                "mentorText": "Budgeting requires sacrifices. You're building a strong financial discipline."
+            }
+        ]
+    },
+    "investment_phase": {
+        "id": "investment_phase",
+        "title": "The Market Opportunity",
+        "text": "A new tech IPO is generating massive hype. Some say it's the next big thing, others say it's a bubble. What's your play?",
+        "speaker": "Mentor",
+        "background": "src/assets/trading.png",
+        "choices": [
+            {
+                "id": "go_all_in",
+                "text": "Go all in on the IPO",
+                "next_chapter": "scam_threat",
+                "is_random": true,
+                "impact_range": {
+                    "money": [-5000, 10000],
+                    "happiness": [-10, 20],
+                    "risk": [20, 40]
+                },
+                "mentorText": "IPO investing is pure speculation. You could strike gold or lose it all."
+            },
+            {
+                "id": "diversify",
+                "text": "Stick to low-cost Index Funds",
+                "next_chapter": "scam_threat",
+                "impact": { "money": 1000, "happiness": 5, "risk": -10 },
+                "mentorText": "Slow and steady wins the race. Index funds are the backbone of many successful portfolios."
+            }
+        ]
+    },
+    "scam_threat": {
+        "id": "scam_threat",
+        "title": "Urgent Security Alert",
+        "text": "You receive an email from your 'bank' stating your account has been compromised. It asks you to click a link and verify your credentials immediately.",
+        "speaker": "Narrator",
+        "background": "src/assets/office.png",
+        "choices": [
+            {
+                "id": "click_link",
+                "text": "Click the link and verify",
+                "next_chapter": "game_end",
+                "impact": { "money": -5000, "happiness": -30, "risk": 50 },
+                "mentorText": "Oh no! That was a phishing scam. Never click links in unexpected security alerts."
+            },
+            {
+                "id": "report_scam",
+                "text": "Ignore and report to official bank app",
+                "next_chapter": "game_end",
+                "impact": { "money": 0, "happiness": 10, "risk": -20 },
+                "mentorText": "Great job spotting the scam! Cybersecurity is a critical part of financial security."
+            }
+        ]
+    },
+    "game_end": {
+        "id": "game_end",
+        "title": "Quest Complete",
+        "text": "You've navigated the first month of your financial journey. Your choices have defined your future. Let's see your final ROI!",
+        "speaker": "Narrator",
+        "background": "src/assets/office.png",
+        "choices": []
+    }
+}
