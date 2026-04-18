@@ -6,8 +6,10 @@ export const Gameplay = (app, node) => {
     div.style.width = '100%';
     div.style.height = '100vh';
 
-    const avatarImg = node && node.avatar ? node.avatar : (app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png');
-    const isPlayer = !node || !node.avatar;
+    // Always use player's gender-based avatar as primary character
+    const playerAvatarImg = app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png';
+    // NPC avatar only shown if node has one
+    const npcAvatarImg = node && node.avatar ? node.avatar : null;
 
     if (!node) {
         return Intro(app); // Fallback to intro if node is missing
@@ -33,8 +35,14 @@ export const Gameplay = (app, node) => {
         </div>
 
         <div class="avatar-display" style="position: fixed; bottom: 0; left: 5%; width: 500px; z-index: 5; pointer-events: none;">
-            <img id="avatar-img" src="${avatarImg}" alt="Avatar" style="width: 100%; height: auto; transform: scaleX(${isPlayer && app.state.user.gender === 'female' ? -1 : 1}); filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4)); opacity: 0; transition: opacity 0.5s ease;">
+            <img id="player-avatar-img" src="${playerAvatarImg}" alt="Player Avatar" style="width: 100%; height: auto; transform: scaleX(${app.state.user.gender === 'female' ? -1 : 1}); filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4)); opacity: 0; transition: opacity 0.5s ease;">
         </div>
+
+        ${npcAvatarImg ? `
+        <div class="npc-avatar-display" style="position: fixed; bottom: 0; right: 5%; width: 500px; z-index: 5; pointer-events: none;">
+            <img id="npc-avatar-img" src="${npcAvatarImg}" alt="NPC Avatar" style="width: 100%; height: auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4)); opacity: 0; transition: opacity 0.5s ease;">
+        </div>
+        ` : ''}
 
         <div class="dialogue-box-container fade-in">
             <div class="dialogue-box glass">
@@ -57,14 +65,22 @@ export const Gameplay = (app, node) => {
         </div>
     `;
 
-    // Process Background Removal
-    const avatarImgElement = div.querySelector('#avatar-img');
-    // Rule for checkerboard: our new assets use white backgrounds, original female uses checkerboard
-    const isCheckerboard = isPlayer && app.state.user.gender === 'female';
-    removeImageBackground(avatarImg, isCheckerboard).then(processedSrc => {
-        avatarImgElement.src = processedSrc;
-        avatarImgElement.style.opacity = '1';
+    // Process Player Avatar Background Removal
+    const playerAvatarElement = div.querySelector('#player-avatar-img');
+    const isCheckerboard = app.state.user.gender === 'female';
+    removeImageBackground(playerAvatarImg, isCheckerboard).then(processedSrc => {
+        playerAvatarElement.src = processedSrc;
+        playerAvatarElement.style.opacity = '1';
     });
+
+    // Process NPC Avatar Background Removal if exists
+    if (npcAvatarImg) {
+        const npcAvatarElement = div.querySelector('#npc-avatar-img');
+        removeImageBackground(npcAvatarImg, false).then(processedSrc => {
+            npcAvatarElement.src = processedSrc;
+            npcAvatarElement.style.opacity = '1';
+        });
+    }
 
     // Start typewriter effect
     const textElement = div.querySelector('#typewriter-text');
