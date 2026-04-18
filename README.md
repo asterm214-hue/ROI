@@ -2,7 +2,9 @@
 
 **ROI** is a modern, story-based financial simulation web application designed to teach better financial decision-making through interactive narrative gameplay.
 
-![Game Preview](src/assets/office.png)
+<p align="center">
+  <img src="src/assets/login_bg.png" alt="Game Preview" width="800">
+</p>
 
 ## 🎯 Objective
 Experience a character-driven journey where your financial choices directly impact your **Money**, **Happiness**, and **Risk** levels. Navigate scenarios, avoid scams, and maximize your ROI with the help of an AI Mentor.
