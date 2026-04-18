@@ -1,4 +1,5 @@
 import { Auth } from './components/Auth.js';
+import { Map } from './components/Map.js';
 import { Intro } from './components/Intro.js';
 import { Gameplay } from './components/Gameplay.js';
 import { Feedback } from './components/Feedback.js';
@@ -39,6 +40,19 @@ class App {
             history.pushState({ view }, '', `#${view}`);
         }
         this.render();
+        window.scrollTo(0, 0);
+    }
+
+    async startLevel(chapterId) {
+        try {
+            const response = await fetch(`${this.apiBase}/scenario/${chapterId}`);
+            const data = await response.json();
+            this.state.currentScenario = data;
+            this.state.currentChapter = chapterId;
+            this.setView('intro');
+        } catch (error) {
+            console.error('Failed to load level:', error);
+        }
     }
 
     updateUser(data) {
@@ -65,7 +79,7 @@ class App {
             };
             this.state.currentScenario = data.first_scenario;
             this.state.currentChapter = data.user.current_chapter;
-            this.setView('intro');
+            this.setView('map');
         } catch (error) {
             console.error('Signup failed:', error);
             alert(error.message || 'Signup failed');
@@ -91,9 +105,8 @@ class App {
             this.state.currentScenario = data.current_scenario;
             this.state.currentChapter = data.user.current_chapter;
             
-            // If user is returning, skip intro, otherwise go to intro
-            const view = data.user.current_chapter === 'start' ? 'intro' : 'gameplay';
-            this.setView(view);
+            // Go to map after login
+            this.setView('map');
         } catch (error) {
             console.error('Login failed:', error);
             alert(error.message || 'Login failed. Check your credentials.');
@@ -155,6 +168,7 @@ class App {
         this.container.innerHTML = '';
         const viewMap = {
             auth: () => Auth(this),
+            map: () => Map(this),
             intro: () => Intro(this),
             gameplay: () => Gameplay(this, this.state.currentScenario),
             feedback: () => Feedback(this, this.state.history[this.state.history.length - 1]),
