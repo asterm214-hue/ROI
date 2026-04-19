@@ -21,6 +21,7 @@ export const Gameplay = (app, node) => {
     const storyText = personalizePlayerText(node.text, app);
     const speakerName = personalizePlayerText(node.speaker, app);
     let speechFallbackTimer = null;
+    let typingTimer = null;
 
     div.innerHTML = `
         <div class="game-bg" style="background-image: url('${node.background}');"></div>
@@ -54,10 +55,13 @@ export const Gameplay = (app, node) => {
         </div>
         ` : ''}
 
-        <div class="dialogue-box-container fade-in">
-            <div class="dialogue-box glass">
-                <div class="speaker-name" style="font-weight: 700; color: var(--primary); margin-bottom: 5px; font-family: 'Outfit';">${speakerName}</div>
-                <div id="typewriter-text" class="story-text" style="font-size: 1.1rem; min-height: 60px;"></div>
+        <div class="dialogue-box-container fade-in" style="z-index: 9999; pointer-events: auto;">
+            <div class="dialogue-box glass" style="position: relative; pointer-events: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 10000; pointer-events: auto;">
+                    <div class="speaker-name" style="font-weight: 700; color: var(--primary); font-family: 'Outfit'; pointer-events: none;">${speakerName}</div>
+                    <button id="skip-link-btn" class="glass-btn" style="font-size: 0.9rem; width: auto; height: auto; padding: 8px 15px; cursor: pointer !important; position: relative; z-index: 10001; pointer-events: auto !important; border: 2px solid var(--primary); background: rgba(23, 190, 187, 0.15); font-weight: 800; color: var(--primary); display: block; text-decoration: none;">⏭️ Skip Story</button>
+                </div>
+                <div id="typewriter-text" class="story-text" style="font-size: 1.1rem; min-height: 60px; pointer-events: none;"></div>
                 
                 <div id="choices-container" class="choices-container" style="display: none;">
                     <div class="predefined-choices" style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
@@ -140,7 +144,7 @@ export const Gameplay = (app, node) => {
     const choicesContainer = div.querySelector('#choices-container');
     
     setTimeout(() => {
-        typewriter(textElement, storyText, 25);
+        typingTimer = typewriter(textElement, storyText, 25);
         speakStoryText();
         // Show choices after text is mostly done
         setTimeout(() => {
@@ -177,6 +181,39 @@ export const Gameplay = (app, node) => {
             app.startLevel(app.state.currentChapter);
         };
     }
+
+    const skipLogic = () => {
+        app.sound.playSFX('click');
+        clearInterval(typingTimer);
+        speech.stop();
+        setSpeakingAnimation(false);
+        clearTimeout(speechFallbackTimer);
+        
+        const textEl = div.querySelector('#typewriter-text');
+        if (textEl) textEl.innerHTML = storyText;
+        
+        const choicesContainer = div.querySelector('#choices-container');
+        if (choicesContainer && choicesContainer.style.display === 'none') {
+            choicesContainer.style.display = 'flex';
+            div.querySelectorAll('.choice-btn').forEach((btn, i) => {
+                setTimeout(() => btn.classList.add('fade-in-up'), i * 100);
+            });
+        } else if (node.choices && node.choices.length > 0) {
+            app.handleChoice(node.choices[0].id);
+        } else {
+            app.setView('map');
+        }
+    };
+
+    setTimeout(() => {
+        const linkBtn = div.querySelector('#skip-link-btn');
+        if (linkBtn) {
+            linkBtn.onclick = (e) => {
+                e.stopPropagation();
+                skipLogic();
+            };
+        }
+    }, 100);
 
     const submitCustomAction = () => {
         const input = div.querySelector('#custom-action-input');
