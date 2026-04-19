@@ -4,6 +4,17 @@ import { Intro } from './components/Intro.js';
 import { Gameplay } from './components/Gameplay.js';
 import { Feedback } from './components/Feedback.js';
 import { Dashboard } from './components/Dashboard.js';
+import { QuestSelection } from './components/QuestSelection.js';
+import { QuestGameplay } from './components/QuestGameplay.js';
+import {
+    completeLocalQuest,
+    createEmptyQuestProgress,
+    loadLocalQuestProgress,
+    recordLocalQuestChoice,
+    recordLocalQuestQuiz,
+    resetLocalQuestProgress,
+    saveLocalQuestProgress
+} from './questEngine.js';
 
 class App {
     constructor() {
@@ -19,6 +30,10 @@ class App {
             currentChapter: 'start',
             currentScenario: null,
             completed_levels: [],
+            questSummaries: [],
+            activeQuest: null,
+            activeQuestProgress: null,
+            currentQuestId: null,
             history: []
         };
         
@@ -33,7 +48,9 @@ class App {
             stats: this.state.stats,
             currentChapter: this.state.currentChapter,
             currentScenario: this.state.currentScenario,
-            completed_levels: this.state.completed_levels
+            completed_levels: this.state.completed_levels,
+            currentQuestId: this.state.currentQuestId,
+            activeQuestProgress: this.state.activeQuestProgress
         }));
     }
 
@@ -46,6 +63,8 @@ class App {
             this.state.currentChapter = parsed.currentChapter;
             this.state.currentScenario = parsed.currentScenario;
             this.state.completed_levels = parsed.completed_levels || [];
+            this.state.currentQuestId = parsed.currentQuestId || null;
+            this.state.activeQuestProgress = parsed.activeQuestProgress || null;
         }
     }
 
@@ -98,6 +117,198 @@ class App {
             this.setView('intro');
         } catch (error) {
             console.error('Failed to load level:', error);
+        }
+    }
+
+    async fetchQuestSummaries() {
+        try {
+            const response = await fetch(`${this.apiBase}/quests?user_id=${this.state.user.id}`);
+            if (!response.ok) throw new Error('Quest list request failed');
+
+            const data = await response.json();
+            this.state.questSummaries = data.quests || [];
+            return this.state.questSummaries;
+        } catch (error) {
+            console.warn('Using local quest list fallback:', error);
+            const response = await fetch(`${this.apiBase}/quests.json`);
+            const data = await response.json();
+            this.state.questSummaries = (data.quests || []).map(quest => ({
+                id: quest.id,
+                title: quest.title,
+                subtitle: quest.subtitle,
+                theme: quest.theme,
+                description: quest.description,
+                reward: quest.reward,
+                completion_badge: quest.completion_badge,
+                status: 'available',
+                progress: loadLocalQuestProgress(this.state.user.id, quest)
+            }));
+            return this.state.questSummaries;
+        }
+    }
+
+    async loadQuest(questId) {
+        try {
+            const response = await fetch(`${this.apiBase}/quests/${questId}?user_id=${this.state.user.id}`);
+            if (!response.ok) throw new Error('Quest detail request failed');
+
+            const data = await response.json();
+            this.state.activeQuest = data.quest;
+            this.state.activeQuestProgress = data.progress;
+            this.state.currentQuestId = questId;
+            this.saveState();
+            return data;
+        } catch (error) {
+            console.warn('Using local quest detail fallback:', error);
+            const response = await fetch(`${this.apiBase}/quests.json`);
+            const data = await response.json();
+            const quest = (data.quests || []).find(item => item.id === questId);
+            if (!quest) throw new Error('Quest not found');
+
+            const progress = loadLocalQuestProgress(this.state.user.id, quest);
+            this.state.activeQuest = quest;
+            this.state.activeQuestProgress = progress;
+            this.state.currentQuestId = questId;
+            this.saveState();
+            return { quest, progress };
+        }
+    }
+
+    async startQuest(questId, replay = false) {
+        try {
+            const response = await fetch(`${this.apiBase}/quests/${questId}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.state.user.id,
+                    replay
+                })
+            });
+            if (!response.ok) throw new Error('Quest start request failed');
+
+            const data = await response.json();
+            this.state.activeQuest = data.quest;
+            this.state.activeQuestProgress = data.progress;
+            this.state.currentQuestId = questId;
+            this.saveState();
+            this.setView('questGameplay');
+        } catch (error) {
+            console.warn('Starting quest locally:', error);
+            const { quest } = await this.loadQuest(questId);
+            const progress = replay
+                ? resetLocalQuestProgress(this.state.user.id, quest)
+                : {
+                    ...loadLocalQuestProgress(this.state.user.id, quest),
+                    started: true
+                };
+
+            if (!progress.current_scene_id) {
+                progress.current_scene_id = quest.scenes[0].id;
+            }
+            saveLocalQuestProgress(this.state.user.id, progress);
+            this.state.activeQuest = quest;
+            this.state.activeQuestProgress = progress;
+            this.state.currentQuestId = questId;
+            this.saveState();
+            this.setView('questGameplay');
+        }
+    }
+
+    async submitQuestChoice(scene, choice) {
+        try {
+            const response = await fetch(`${this.apiBase}/quests/${this.state.currentQuestId}/choice`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.state.user.id,
+                    scene_id: scene.id,
+                    choice_id: choice.id
+                })
+            });
+            if (!response.ok) throw new Error('Quest choice request failed');
+
+            const data = await response.json();
+            this.state.activeQuestProgress = data.progress;
+            this.saveState();
+            return data;
+        } catch (error) {
+            console.warn('Saving quest choice locally:', error);
+            const progress = this.state.activeQuestProgress || createEmptyQuestProgress(this.state.activeQuest);
+            const nextProgress = recordLocalQuestChoice(this.state.user.id, progress, scene, choice);
+            this.state.activeQuestProgress = nextProgress;
+            this.saveState();
+            return {
+                status: 'local',
+                progress: nextProgress,
+                next_scene_id: nextProgress.current_scene_id,
+                selected_choice: choice
+            };
+        }
+    }
+
+    async submitQuestQuiz(scene, answers) {
+        try {
+            const response = await fetch(`${this.apiBase}/quests/${this.state.currentQuestId}/quiz`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.state.user.id,
+                    scene_id: scene.id,
+                    answers
+                })
+            });
+            if (!response.ok) throw new Error('Quest quiz request failed');
+
+            const data = await response.json();
+            this.state.activeQuestProgress = data.progress;
+            this.saveState();
+            return data;
+        } catch (error) {
+            console.warn('Saving quest quiz locally:', error);
+            const progress = this.state.activeQuestProgress || createEmptyQuestProgress(this.state.activeQuest);
+            const data = recordLocalQuestQuiz(this.state.user.id, progress, scene, answers);
+            this.state.activeQuestProgress = data.progress;
+            this.saveState();
+            return {
+                status: 'local',
+                ...data
+            };
+        }
+    }
+
+    async completeQuest(currentSceneId, resultPath) {
+        try {
+            const response = await fetch(`${this.apiBase}/quests/${this.state.currentQuestId}/complete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.state.user.id,
+                    current_scene_id: currentSceneId,
+                    result_path: resultPath
+                })
+            });
+            if (!response.ok) throw new Error('Quest completion request failed');
+
+            const data = await response.json();
+            this.state.activeQuestProgress = data.progress;
+            this.saveState();
+            return data;
+        } catch (error) {
+            console.warn('Completing quest locally:', error);
+            const progress = this.state.activeQuestProgress || createEmptyQuestProgress(this.state.activeQuest);
+            const nextProgress = completeLocalQuest(
+                this.state.user.id,
+                this.state.activeQuest,
+                progress,
+                currentSceneId
+            );
+            this.state.activeQuestProgress = nextProgress;
+            this.saveState();
+            return {
+                status: 'local',
+                progress: nextProgress,
+                reward: this.state.activeQuest.reward
+            };
         }
     }
 
@@ -167,6 +378,10 @@ class App {
         this.state.stats = { money: 0, happiness: 0, risk: 0 };
         this.state.currentChapter = 'start';
         this.state.currentScenario = null;
+        this.state.questSummaries = [];
+        this.state.activeQuest = null;
+        this.state.activeQuestProgress = null;
+        this.state.currentQuestId = null;
         this.state.history = [];
         this.setView('auth');
     }
@@ -243,10 +458,12 @@ class App {
             intro: () => Intro(this),
             gameplay: () => Gameplay(this, this.state.currentScenario),
             feedback: () => Feedback(this, this.state.history[this.state.history.length - 1]),
-            dashboard: () => Dashboard(this)
+            dashboard: () => Dashboard(this),
+            questSelection: () => QuestSelection(this),
+            questGameplay: () => QuestGameplay(this)
         };
 
-        const viewElement = viewMap[this.state.view]();
+        const viewElement = (viewMap[this.state.view] || viewMap.map)();
         viewElement.classList.add('fade-in');
         this.container.appendChild(viewElement);
     }

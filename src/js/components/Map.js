@@ -1,4 +1,5 @@
 import { removeImageBackground } from '../app.js';
+import { getPlayerAvatarSrc, isPlayerAvatarCheckerboard } from '../playerText.js';
 
 export const Map = (app) => {
     const div = document.createElement('div');
@@ -23,7 +24,7 @@ export const Map = (app) => {
         return false;
     }) || levels[0];
 
-    const avatarImg = app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png';
+    const avatarImg = getPlayerAvatarSrc(app);
 
     div.innerHTML = `
         <div class="map-view-bg"></div>
@@ -35,6 +36,7 @@ export const Map = (app) => {
             </button>
             <div class="map-title-pill">ROI <span style="font-style: italic; color: var(--primary);">Quest</span></div>
             <div class="map-stats-bar">
+                <button class="map-logout-btn" id="map-logout-btn">Logout</button>
                 <div class="map-stat-item">💰 <span>${activeLevel.num === 1 ? 5000 : (activeLevel.num === 2 ? 50000 : (activeLevel.num === 3 ? 500000 : app.state.stats.money))}</span></div>
                 <div class="map-stat-item">😊 <span>50</span></div>
                 <div class="map-stat-item">⚠️ <span>10</span></div>
@@ -77,12 +79,17 @@ export const Map = (app) => {
             <div class="map-info-desc" id="info-desc">${activeLevel.desc}</div>
             <button class="map-resume-btn" id="resume-btn">Resume Story</button>
         </div>
+
+        <div class="map-quest-card" id="map-quest-card">
+            <div class="map-quest-kicker">Scam Awareness</div>
+            <div class="map-quest-title">Quest Mode</div>
+            <button class="map-quest-open-btn" id="quest-mode-btn">Open Quests</button>
+        </div>
     `;
 
     // Process Avatar Background Removal
     const avatarElement = div.querySelector('#map-avatar');
-    const isFemale = app.state.user.gender === 'female';
-    removeImageBackground(avatarImg, isFemale).then(processedSrc => {
+    removeImageBackground(avatarImg, isPlayerAvatarCheckerboard(app)).then(processedSrc => {
         avatarElement.src = processedSrc;
         avatarElement.style.opacity = '1';
     });
@@ -108,10 +115,14 @@ export const Map = (app) => {
             if (num === 3) previewMoney = 500000;
             
             statsBar.innerHTML = `
+                <button class="map-logout-btn" id="map-logout-btn">Logout</button>
                 <div class="map-stat-item">💰 <span>${previewMoney}</span></div>
                 <div class="map-stat-item">😊 <span>50</span></div>
                 <div class="map-stat-item">⚠️ <span>10</span></div>
             `;
+            statsBar.querySelector('#map-logout-btn').onclick = () => {
+                app.logout();
+            };
             
             // Set active state
             div.querySelectorAll('.map-level-node').forEach(n => n.classList.remove('active'));
@@ -125,8 +136,21 @@ export const Map = (app) => {
         app.startLevel(activeLevel.chapter);
     };
 
+    div.querySelector('#map-quest-card').onclick = () => {
+        app.setView('questSelection');
+    };
+
+    div.querySelector('#quest-mode-btn').onclick = (event) => {
+        event.stopPropagation();
+        app.setView('questSelection');
+    };
+
     div.querySelector('#map-back-btn').onclick = () => {
         app.setView('auth');
+    };
+
+    div.querySelector('#map-logout-btn').onclick = () => {
+        app.logout();
     };
 
     return div;

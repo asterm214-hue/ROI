@@ -3,7 +3,7 @@ import json
 import random
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from models import db, User
+from models import db, User, UserQuestProgress
 
 # Initialize Flask with the root directory as the static folder to serve frontend files
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -42,9 +42,237 @@ def serve_static(path):
 def status():
     return jsonify({"status": "online", "message": "ROI API is running"})
 
+@app.route('/quests', methods=['GET'])
+def list_quests():
+    user_id = request.args.get('user_id', type=int)
+    progress_by_quest = {}
+
+    if user_id:
+        progress_rows = UserQuestProgress.query.filter_by(user_id=user_id).all()
+        progress_by_quest = {row.quest_id: row for row in progress_rows}
+
+    return jsonify({
+        "quests": [
+            summarize_quest(quest, progress_by_quest.get(quest["id"]))
+            for quest in QUEST_DATA.get("quests", [])
+        ]
+    })
+
+@app.route('/quests/<quest_id>', methods=['GET'])
+def get_quest(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    user_id = request.args.get('user_id', type=int)
+    progress = get_existing_progress(user_id, quest_id) if user_id else None
+
+    return jsonify({
+        "quest": quest,
+        "progress": progress.to_dict() if progress else empty_quest_progress(quest)
+    })
+
+@app.route('/quests/<quest_id>/start', methods=['POST'])
+def start_quest(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    data = get_json_payload()
+    user_id, error = require_user_id(data)
+    if error:
+        return error
+
+    _, progress, error = get_or_create_progress(user_id, quest_id)
+    if error:
+        return error
+
+    should_reset = data.get('replay', False) or not progress.started or progress.completed
+    if should_reset:
+        progress.reset_for_replay(get_first_scene_id(quest))
+    else:
+        progress.started = True
+        if not progress.current_scene_id:
+            progress.current_scene_id = get_first_scene_id(quest)
+
+    db.session.commit()
+    return jsonify({
+        "status": "success",
+        "quest": quest,
+        "progress": progress.to_dict()
+    })
+
+@app.route('/quests/<quest_id>/choice', methods=['POST'])
+def submit_quest_choice(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    data = get_json_payload()
+    user_id, error = require_user_id(data)
+    if error:
+        return error
+
+    scene_id = data.get('scene_id')
+    choice_id = data.get('choice_id')
+    scene = find_quest_scene(quest, scene_id)
+    if not scene or scene.get('type') != 'choice':
+        return jsonify({"error": "Choice scene not found"}), 404
+
+    selected_choice = find_scene_choice(scene, choice_id)
+    if not selected_choice:
+        return jsonify({"error": "Choice not found"}), 404
+
+    _, progress, error = get_or_create_progress(user_id, quest_id)
+    if error:
+        return error
+    if not progress.started:
+        progress.reset_for_replay(get_first_scene_id(quest))
+
+    choices = json.loads(progress.choices_json) if progress.choices_json else []
+    choices = [choice for choice in choices if choice.get("scene_id") != scene_id]
+    choices.append({
+        "scene_id": scene_id,
+        "choice_id": choice_id,
+        "choice_text": selected_choice.get("text"),
+        "risk_points": selected_choice.get("risk_points", 0),
+        "outcome_hint": selected_choice.get("outcome_hint")
+    })
+
+    progress.choices_json = json.dumps(choices)
+    progress.risk_score = sum(choice.get("risk_points", 0) for choice in choices)
+    progress.current_scene_id = selected_choice.get("next") or scene.get("next")
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "progress": progress.to_dict(),
+        "next_scene_id": progress.current_scene_id,
+        "selected_choice": selected_choice
+    })
+
+@app.route('/quests/<quest_id>/quiz', methods=['POST'])
+def submit_quest_quiz(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    data = get_json_payload()
+    user_id, error = require_user_id(data)
+    if error:
+        return error
+
+    scene_id = data.get('scene_id')
+    answers = data.get('answers', {})
+    scene = find_quest_scene(quest, scene_id)
+    if not scene or scene.get('type') != 'quiz':
+        return jsonify({"error": "Quiz scene not found"}), 404
+
+    items = scene.get("items", [])
+    score = 0
+    item_results = []
+    for item in items:
+        selected_answer = answers.get(item["id"])
+        is_correct = selected_answer == item.get("answer")
+        if is_correct:
+            score += 1
+        item_results.append({
+            "id": item["id"],
+            "text": item["text"],
+            "selected_answer": selected_answer,
+            "correct_answer": item.get("answer"),
+            "correct": is_correct
+        })
+
+    total = len(items)
+    passing_score = scene.get("passing_score", total)
+    passed = score >= passing_score
+
+    _, progress, error = get_or_create_progress(user_id, quest_id)
+    if error:
+        return error
+    if not progress.started:
+        progress.reset_for_replay(get_first_scene_id(quest))
+
+    progress.quiz_answers_json = json.dumps(answers)
+    progress.quiz_score = score
+    progress.quiz_total = total
+    if passed:
+        progress.current_scene_id = scene.get("next")
+    else:
+        progress.current_scene_id = scene_id
+
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "progress": progress.to_dict(),
+        "score": score,
+        "total": total,
+        "passed": passed,
+        "item_results": item_results,
+        "feedback": scene.get("feedback_correct") if passed else scene.get("feedback_retry")
+    })
+
+@app.route('/quests/<quest_id>/progress', methods=['GET'])
+def get_quest_progress(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    user_id = request.args.get('user_id', type=int)
+    if not user_id:
+        return jsonify({"error": "Missing user_id"}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    progress = get_existing_progress(user_id, quest_id)
+    return jsonify({
+        "progress": progress.to_dict() if progress else empty_quest_progress(quest)
+    })
+
+@app.route('/quests/<quest_id>/complete', methods=['POST'])
+def complete_quest(quest_id):
+    quest, error = get_quest_or_404(quest_id)
+    if error:
+        return error
+
+    data = get_json_payload()
+    user_id, error = require_user_id(data)
+    if error:
+        return error
+
+    _, progress, error = get_or_create_progress(user_id, quest_id)
+    if error:
+        return error
+    if not progress.started:
+        progress.reset_for_replay(get_first_scene_id(quest))
+
+    result_path = data.get("result_path") or resolve_quest_result_path(quest, progress)
+    progress.completed = True
+    progress.result_path = result_path
+    progress.current_scene_id = data.get("current_scene_id") or progress.current_scene_id
+    progress.reward_title = quest.get("reward", {}).get("title")
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "progress": progress.to_dict(),
+        "reward": quest.get("reward"),
+        "outcome": quest.get("outcomes", {}).get(result_path)
+    })
+
 # Load Scenarios
 with open(os.path.join(_base_dir, 'scenarios.json'), 'r') as f:
     SCENARIOS = json.load(f)
+
+# Load Quest Mode content
+with open(os.path.join(_base_dir, 'quests.json'), 'r', encoding='utf-8') as f:
+    QUEST_DATA = json.load(f)
+
+QUESTS_BY_ID = {quest['id']: quest for quest in QUEST_DATA.get('quests', [])}
 
 def get_mentor_feedback(user):
     """Rule-based AI Mentor feedback logic."""
@@ -57,6 +285,80 @@ def get_mentor_feedback(user):
     if user.money > 50000:
         return "Impressive wealth accumulation! You're well on your way to becoming a financial pro."
     return "Good financial management! Keep balancing your stats."
+
+def get_quest_or_404(quest_id):
+    quest = QUESTS_BY_ID.get(quest_id)
+    if not quest:
+        return None, (jsonify({"error": "Quest not found"}), 404)
+    return quest, None
+
+def get_first_scene_id(quest):
+    return quest['scenes'][0]['id'] if quest.get('scenes') else None
+
+def find_quest_scene(quest, scene_id):
+    return next((scene for scene in quest.get('scenes', []) if scene.get('id') == scene_id), None)
+
+def find_scene_choice(scene, choice_id):
+    return next((choice for choice in scene.get('choices', []) if choice.get('id') == choice_id), None)
+
+def empty_quest_progress(quest):
+    return {
+        "quest_id": quest["id"],
+        "started": False,
+        "completed": False,
+        "current_scene_id": get_first_scene_id(quest),
+        "result_path": None,
+        "risk_score": 0,
+        "quiz_score": 0,
+        "quiz_total": 0,
+        "choices": [],
+        "quiz_answers": {},
+        "reward_title": None,
+        "updated_at": None
+    }
+
+def get_existing_progress(user_id, quest_id):
+    if not user_id:
+        return None
+    return UserQuestProgress.query.filter_by(user_id=user_id, quest_id=quest_id).first()
+
+def get_or_create_progress(user_id, quest_id):
+    user = User.query.get(user_id)
+    if not user:
+        return None, None, (jsonify({"error": "User not found"}), 404)
+
+    progress = get_existing_progress(user_id, quest_id)
+    if not progress:
+        progress = UserQuestProgress(user_id=user_id, quest_id=quest_id)
+        db.session.add(progress)
+    return user, progress, None
+
+def summarize_quest(quest, progress=None):
+    return {
+        "id": quest["id"],
+        "title": quest["title"],
+        "subtitle": quest.get("subtitle"),
+        "theme": quest.get("theme"),
+        "description": quest.get("description"),
+        "reward": quest.get("reward"),
+        "completion_badge": quest.get("completion_badge"),
+        "status": "available",
+        "progress": progress.to_dict() if progress else empty_quest_progress(quest)
+    }
+
+def resolve_quest_result_path(quest, progress):
+    rule = quest.get("branch_rule", {})
+    threshold = rule.get("falls_for_scam_at_risk_score", 2)
+    return "falls_for_scam" if progress.risk_score >= threshold else "avoids_scam"
+
+def get_json_payload():
+    return request.get_json(silent=True) or {}
+
+def require_user_id(data):
+    user_id = data.get('user_id')
+    if not user_id:
+        return None, (jsonify({"error": "Missing user_id"}), 400)
+    return user_id, None
 
 @app.route('/signup', methods=['POST'])
 def signup():

@@ -1,0 +1,1040 @@
+{
+  "quests": [
+    {
+      "id": "lottery_scam",
+      "title": "Quest 1: Lottery Scam",
+      "subtitle": "The Surprise Call",
+      "theme": "Lottery Scam",
+      "description": "A caller claims you won a huge lottery you never entered. Spot the trick before excitement takes over.",
+      "completion_badge": "Smart Decision Maker 🧠",
+      "reward": {
+        "title": "Smart Decision Maker 🧠",
+        "badge": "🧠",
+        "description": "You learned how to slow down, verify claims, and avoid upfront-fee prize scams."
+      },
+      "branch_rule": {
+        "falls_for_scam_at_risk_score": 2
+      },
+      "outcomes": {
+        "falls_for_scam": {
+          "label": "Falls for scam",
+          "tone": "warning"
+        },
+        "avoids_scam": {
+          "label": "Avoids scam",
+          "tone": "success"
+        }
+      },
+      "scenes": [
+        {
+          "id": "q1_intro",
+          "type": "dialogue",
+          "stage": "intro",
+          "background": "src/assets/login_bg.png",
+          "next": "q1_choice_first_reaction",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "(Phone rings 📱)",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Congratulations! You’ve won a lottery of ₹10,00,000!",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Wait… I never entered any lottery…",
+              "mood": "worried"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "It’s part of a promotional draw. Your number was selected randomly.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Friend",
+              "text": "₹10 lakh?? That’s insane, you’re so lucky!",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "This feels… too good to be true.",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q1_choice_first_reaction",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/login_bg.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 1: First Reaction",
+          "choices": [
+            {
+              "id": "q1_claim_prize",
+              "text": "Really?? How do I claim it?",
+              "risk_points": 1,
+              "outcome_hint": "Curiosity is natural, but excitement can make scams feel convincing.",
+              "next": "q1_catch"
+            },
+            {
+              "id": "q1_did_not_enter",
+              "text": "I don’t remember entering any lottery…",
+              "risk_points": 0,
+              "outcome_hint": "Good pause. Verifying the basic claim is the first defense.",
+              "next": "q1_catch"
+            },
+            {
+              "id": "q1_not_interested",
+              "text": "This sounds suspicious, I’m not interested.",
+              "risk_points": 0,
+              "outcome_hint": "Strong boundary. Scams lose power when you refuse pressure.",
+              "next": "q1_catch"
+            }
+          ]
+        },
+        {
+          "id": "q1_catch",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/login_bg.png",
+          "next": "q1_choice_payment",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "To release your prize, you just need to pay a small processing fee of ₹3,000.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Once paid, your winnings will be transferred immediately.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Why do I have to pay to receive money?",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q1_choice_payment",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/login_bg.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 2: Payment Decision",
+          "choices": [
+            {
+              "id": "q1_pay_fee",
+              "text": "Okay, I’ll pay ₹3,000. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Upfront fees for prizes are a major red flag.",
+              "next": "q1_pressure"
+            },
+            {
+              "id": "q1_ask_proof",
+              "text": "Can you share official proof or website?",
+              "risk_points": 0,
+              "outcome_hint": "Asking for official verification slows the scam down.",
+              "next": "q1_pressure"
+            },
+            {
+              "id": "q1_refuse_payment",
+              "text": "I don’t trust this, I won’t pay.",
+              "risk_points": 0,
+              "outcome_hint": "Correct instinct. Real prizes do not need advance payment.",
+              "next": "q1_pressure"
+            }
+          ]
+        },
+        {
+          "id": "q1_pressure",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/login_bg.png",
+          "next": "q1_choice_urgency",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "This offer is valid only for today. If you don’t act now, the prize will be cancelled.",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Friend",
+              "text": "Just pay it quickly, what if it’s real?",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Why are they rushing me…",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q1_choice_urgency",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/login_bg.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 3: Handling Urgency",
+          "choices": [
+            {
+              "id": "q1_pay_quickly",
+              "text": "Pay quickly before time runs out. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Urgency is designed to stop you from thinking clearly.",
+              "next": "q1_quiz"
+            },
+            {
+              "id": "q1_verify",
+              "text": "Take time and verify the information.",
+              "risk_points": 0,
+              "outcome_hint": "Taking time is one of the best scam defenses.",
+              "next": "q1_quiz"
+            },
+            {
+              "id": "q1_disconnect",
+              "text": "Ignore and disconnect the call.",
+              "risk_points": 0,
+              "outcome_hint": "Ending suspicious calls protects you from more pressure.",
+              "next": "q1_quiz"
+            }
+          ]
+        },
+        {
+          "id": "q1_quiz",
+          "type": "quiz",
+          "stage": "quiz",
+          "background": "src/assets/login_bg.png",
+          "speaker": "System",
+          "title": "Mini Quiz Mode 🎯",
+          "prompt": "Identify what seems wrong in this situation:",
+          "answer_options": [
+            "safe",
+            "suspicious"
+          ],
+          "passing_score": 4,
+          "feedback_correct": "Good observation. These are common scam patterns.",
+          "feedback_retry": "Look carefully — something isn’t right here.",
+          "next": "q1_realization",
+          "items": [
+            {
+              "id": "q1_quiz_win_without_entering",
+              "text": "Winning without participating",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q1_quiz_pay_first",
+              "text": "Asked to pay money first",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q1_quiz_urgent_deadline",
+              "text": "Urgent deadline pressure",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q1_quiz_no_verification",
+              "text": "No official verification",
+              "answer": "suspicious"
+            }
+          ]
+        },
+        {
+          "id": "q1_realization",
+          "type": "dialogue",
+          "stage": "realization",
+          "background": "src/assets/login_bg.png",
+          "next_by_result": {
+            "falls_for_scam": "q1_outcome_falls",
+            "avoids_scam": "q1_outcome_avoids"
+          },
+          "lines": [
+            {
+              "speaker": "Adam/Eve",
+              "text": "Real prizes don’t ask for money…",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "Scammers often use excitement and urgency to trick people.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I almost believed it.",
+              "mood": "shocked"
+            }
+          ]
+        },
+        {
+          "id": "q1_outcome_falls",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "falls_for_scam",
+          "background": "src/assets/login_bg.png",
+          "next": "q1_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "₹3,000 paid.",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "The caller is no longer reachable.",
+              "mood": "sad"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I lost money…",
+              "mood": "sad"
+            },
+            {
+              "speaker": "System",
+              "text": "Always verify before trusting such offers.",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q1_outcome_avoids",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "avoids_scam",
+          "background": "src/assets/login_bg.png",
+          "next": "q1_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "You avoided a scam.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "That was clearly fake.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "System",
+              "text": "Being cautious protects your money.",
+              "mood": "happy"
+            }
+          ]
+        },
+        {
+          "id": "q1_lesson",
+          "type": "lesson",
+          "stage": "lesson",
+          "background": "src/assets/login_bg.png",
+          "speaker": "System",
+          "title": "Key Takeaways:",
+          "takeaways": [
+            "If you didn’t enter, you didn’t win",
+            "Real lotteries don’t ask for upfront fees",
+            "Urgency is often a scam tactic",
+            "Always verify before acting"
+          ],
+          "complete_text": "Quest Completed: Smart Decision Maker 🧠"
+        }
+      ]
+    },
+    {
+      "id": "fake_loan_call",
+      "title": "Quest 2: Fake Loan Call",
+      "subtitle": "Scam Alert – Fake Loan Calls",
+      "theme": "Fake Instant Loan Scam",
+      "description": "An instant loan caller offers fast money with no documents. Decide what is real and what is bait.",
+      "completion_badge": "Scam Awareness Increased 🔐",
+      "reward": {
+        "title": "Scam Awareness Increased 🔐",
+        "badge": "🔐",
+        "description": "You learned to protect personal data and reject upfront-fee loan traps."
+      },
+      "branch_rule": {
+        "falls_for_scam_at_risk_score": 2
+      },
+      "outcomes": {
+        "falls_for_scam": {
+          "label": "Falls for scam",
+          "tone": "warning"
+        },
+        "avoids_scam": {
+          "label": "Avoids scam",
+          "tone": "success"
+        }
+      },
+      "scenes": [
+        {
+          "id": "q2_intro",
+          "type": "dialogue",
+          "stage": "intro",
+          "background": "src/assets/office.png",
+          "next": "q2_choice_first_reaction",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "(Phone rings 📱)",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Hello ma’am/sir, congratulations! You’ve been pre-approved for an instant loan of ₹2,00,000.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I didn’t even apply for a loan…",
+              "mood": "worried"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "No problem! This is a special offer. No documents, no waiting.",
+              "mood": "speaking"
+            }
+          ]
+        },
+        {
+          "id": "q2_choice_first_reaction",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/office.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 1: First Reaction",
+          "choices": [
+            {
+              "id": "q2_tell_more",
+              "text": "Sounds good, tell me more.",
+              "risk_points": 1,
+              "outcome_hint": "Listening further can be okay, but stay alert when you never applied.",
+              "next": "q2_pressure"
+            },
+            {
+              "id": "q2_how_number",
+              "text": "How did you get my number?",
+              "risk_points": 0,
+              "outcome_hint": "Good question. Legitimate lenders should explain how they contacted you.",
+              "next": "q2_pressure"
+            },
+            {
+              "id": "q2_not_interested",
+              "text": "I’m not interested, please don’t call again.",
+              "risk_points": 0,
+              "outcome_hint": "Clear refusal protects your attention and personal data.",
+              "next": "q2_pressure"
+            }
+          ]
+        },
+        {
+          "id": "q2_pressure",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/office.png",
+          "next": "q2_choice_pressure",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "This offer is only valid today. You must act fast.",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Just pay a small processing fee of ₹2,000 to activate your loan.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Why do I need to pay before getting the loan?",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q2_choice_pressure",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/office.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 2: Handling Pressure",
+          "choices": [
+            {
+              "id": "q2_pay_fee",
+              "text": "Okay, I’ll pay the fee. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Upfront processing fees on cold calls are a common scam signal.",
+              "next": "q2_data_trap"
+            },
+            {
+              "id": "q2_email_details",
+              "text": "Can you send official details on email?",
+              "risk_points": 0,
+              "outcome_hint": "Asking for verifiable official details is safer than paying immediately.",
+              "next": "q2_data_trap"
+            },
+            {
+              "id": "q2_wont_proceed",
+              "text": "This sounds suspicious, I won’t proceed.",
+              "risk_points": 0,
+              "outcome_hint": "Good boundary. Pressure plus fees should stop the conversation.",
+              "next": "q2_data_trap"
+            }
+          ]
+        },
+        {
+          "id": "q2_data_trap",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/office.png",
+          "next": "q2_choice_data",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "To proceed, share your Aadhaar number and bank details.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "That feels risky…",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q2_choice_data",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/office.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 3: Sharing Information",
+          "choices": [
+            {
+              "id": "q2_share_details",
+              "text": "Share details quickly to get the loan. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Never share sensitive identity or bank details on an unverified call.",
+              "next": "q2_quiz"
+            },
+            {
+              "id": "q2_verify_company",
+              "text": "Ask for company verification first.",
+              "risk_points": 0,
+              "outcome_hint": "Verification protects your identity and money.",
+              "next": "q2_quiz"
+            },
+            {
+              "id": "q2_refuse_end",
+              "text": "Refuse and end the call.",
+              "risk_points": 0,
+              "outcome_hint": "Ending the call is the safest move when personal data is requested.",
+              "next": "q2_quiz"
+            }
+          ]
+        },
+        {
+          "id": "q2_quiz",
+          "type": "quiz",
+          "stage": "quiz",
+          "background": "src/assets/office.png",
+          "speaker": "System",
+          "title": "Mini Quiz Mode 🎯",
+          "prompt": "Identify the red flags in this situation:",
+          "answer_options": [
+            "safe",
+            "suspicious"
+          ],
+          "passing_score": 4,
+          "feedback_correct": "Good awareness. These are common scam signs.",
+          "feedback_retry": "Take another look — something doesn’t feel right here.",
+          "next": "q2_reality_check",
+          "items": [
+            {
+              "id": "q2_quiz_without_applying",
+              "text": "Loan approved without applying",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q2_quiz_urgent_deadline",
+              "text": "Urgent deadline to decide",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q2_quiz_money_upfront",
+              "text": "Asking for money upfront",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q2_quiz_bank_details",
+              "text": "Requesting personal/bank details",
+              "answer": "suspicious"
+            }
+          ]
+        },
+        {
+          "id": "q2_reality_check",
+          "type": "dialogue",
+          "stage": "realization",
+          "background": "src/assets/office.png",
+          "next_by_result": {
+            "falls_for_scam": "q2_outcome_falls",
+            "avoids_scam": "q2_outcome_avoids"
+          },
+          "lines": [
+            {
+              "speaker": "Adam/Eve",
+              "text": "This doesn’t feel like a genuine offer.",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "Scam calls often create urgency and ask for money or personal data.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I’m glad I didn’t rush into it.",
+              "mood": "happy"
+            }
+          ]
+        },
+        {
+          "id": "q2_outcome_falls",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "falls_for_scam",
+          "background": "src/assets/office.png",
+          "next": "q2_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "You paid ₹2,000 as a fee.",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "The caller is no longer reachable.",
+              "mood": "sad"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I got scammed…",
+              "mood": "sad"
+            },
+            {
+              "speaker": "System",
+              "text": "Always verify before trusting such offers.",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q2_outcome_avoids",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "avoids_scam",
+          "background": "src/assets/office.png",
+          "next": "q2_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "You avoided a potential scam.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "That was close.",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "System",
+              "text": "Being cautious helps protect your money.",
+              "mood": "happy"
+            }
+          ]
+        },
+        {
+          "id": "q2_lesson",
+          "type": "lesson",
+          "stage": "lesson",
+          "background": "src/assets/office.png",
+          "speaker": "System",
+          "title": "Key Takeaways:",
+          "takeaways": [
+            "Never pay upfront fees for loans",
+            "Avoid sharing personal/bank details on calls",
+            "Verify offers from official sources",
+            "Be careful of urgency tactics"
+          ],
+          "complete_text": "Quest Completed: Scam Awareness Increased 🔐"
+        }
+      ]
+    },
+    {
+      "id": "fake_stock_tip",
+      "title": "Quest 3: Fake Stock Investment Tip",
+      "subtitle": "Hot Tip or Trap?",
+      "theme": "Fake Investment Scam",
+      "description": "A stock tip promises fast guaranteed returns. Check whether the opportunity is wisdom or a trap.",
+      "completion_badge": "Smart Investor Mindset 📊",
+      "reward": {
+        "title": "Smart Investor Mindset 📊",
+        "badge": "📊",
+        "description": "You learned to question guaranteed returns and verify investment advice before acting."
+      },
+      "branch_rule": {
+        "falls_for_scam_at_risk_score": 2
+      },
+      "outcomes": {
+        "falls_for_scam": {
+          "label": "Falls for scam",
+          "tone": "warning"
+        },
+        "avoids_scam": {
+          "label": "Avoids scam",
+          "tone": "success"
+        }
+      },
+      "scenes": [
+        {
+          "id": "q3_intro",
+          "type": "dialogue",
+          "stage": "intro",
+          "background": "src/assets/trading.png",
+          "next": "q3_choice_initial",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "(Phone rings 📱)",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Hello, I’m calling from a stock advisory firm.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "We have an exclusive tip — a stock that will double in 2 weeks.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Double? That sounds too fast…",
+              "mood": "worried"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "Our VIP clients are already investing. You don’t want to miss this.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Friend",
+              "text": "Bro if it doubles, just invest na!",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I don’t know… this feels risky.",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q3_choice_initial",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/trading.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 1: Initial Response",
+          "choices": [
+            {
+              "id": "q3_tell_more",
+              "text": "Tell me more about the stock.",
+              "risk_points": 1,
+              "outcome_hint": "Curiosity is fine, but guaranteed fast profits need extra caution.",
+              "next": "q3_hook"
+            },
+            {
+              "id": "q3_registered",
+              "text": "Is your company registered?",
+              "risk_points": 0,
+              "outcome_hint": "Registration and verification matter before trusting financial advice.",
+              "next": "q3_hook"
+            },
+            {
+              "id": "q3_not_interested",
+              "text": "I’m not interested.",
+              "risk_points": 0,
+              "outcome_hint": "Refusing unknown tips is a valid protective move.",
+              "next": "q3_hook"
+            }
+          ]
+        },
+        {
+          "id": "q3_hook",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/trading.png",
+          "next": "q3_choice_trust",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "You just need to invest ₹10,000 now.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "We guarantee returns — minimum 2x profit.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Guaranteed returns in stock market?",
+              "mood": "shocked"
+            }
+          ]
+        },
+        {
+          "id": "q3_choice_trust",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/trading.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 2: Trust Decision",
+          "choices": [
+            {
+              "id": "q3_invest_now",
+              "text": "Okay, I’ll invest ₹10,000. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Guaranteed stock returns are a strong investment scam signal.",
+              "next": "q3_push"
+            },
+            {
+              "id": "q3_share_proof",
+              "text": "Can you share official proof and registration?",
+              "risk_points": 0,
+              "outcome_hint": "Demanding proof helps filter out fake advisors.",
+              "next": "q3_push"
+            },
+            {
+              "id": "q3_no_guarantee",
+              "text": "No one can guarantee returns, I won’t invest.",
+              "risk_points": 0,
+              "outcome_hint": "Correct. Markets involve risk and no genuine advisor can remove it.",
+              "next": "q3_push"
+            }
+          ]
+        },
+        {
+          "id": "q3_push",
+          "type": "dialogue",
+          "stage": "story",
+          "background": "src/assets/trading.png",
+          "next": "q3_choice_pressure",
+          "lines": [
+            {
+              "speaker": "Scammer",
+              "text": "This is a limited-time opportunity.",
+              "mood": "shocked"
+            },
+            {
+              "speaker": "Scammer",
+              "text": "If you delay, you’ll miss the profit.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Friend",
+              "text": "Yaar just try once, what’s the harm?",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Why are they rushing me…",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q3_choice_pressure",
+          "type": "choice",
+          "stage": "decision",
+          "background": "src/assets/trading.png",
+          "speaker": "System",
+          "prompt": "What would you do?",
+          "decision_title": "Choice 3: Handling Pressure",
+          "choices": [
+            {
+              "id": "q3_invest_quickly",
+              "text": "Invest quickly before it’s too late. ❌",
+              "risk_points": 2,
+              "outcome_hint": "Pressure to rush an investment is a red flag.",
+              "next": "q3_quiz"
+            },
+            {
+              "id": "q3_research",
+              "text": "Take time and research the stock.",
+              "risk_points": 0,
+              "outcome_hint": "Research gives you control instead of letting pressure decide.",
+              "next": "q3_quiz"
+            },
+            {
+              "id": "q3_disconnect",
+              "text": "Ignore and disconnect.",
+              "risk_points": 0,
+              "outcome_hint": "Disconnecting from an unverified advisor is a smart move.",
+              "next": "q3_quiz"
+            }
+          ]
+        },
+        {
+          "id": "q3_quiz",
+          "type": "quiz",
+          "stage": "quiz",
+          "background": "src/assets/trading.png",
+          "speaker": "System",
+          "title": "Mini Quiz Mode 🎯",
+          "prompt": "Identify what seems risky here:",
+          "answer_options": [
+            "safe",
+            "suspicious"
+          ],
+          "passing_score": 4,
+          "feedback_correct": "Good thinking. These are common investment scam signals.",
+          "feedback_retry": "Look closely — something doesn’t add up.",
+          "next": "q3_reality_check",
+          "items": [
+            {
+              "id": "q3_quiz_guaranteed_returns",
+              "text": "Guaranteed returns in stock market",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q3_quiz_pressure",
+              "text": "Pressure to act immediately",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q3_quiz_unknown_firm",
+              "text": "Unknown advisory firm",
+              "answer": "suspicious"
+            },
+            {
+              "id": "q3_quiz_no_documents",
+              "text": "No proper verification or documents",
+              "answer": "suspicious"
+            }
+          ]
+        },
+        {
+          "id": "q3_reality_check",
+          "type": "dialogue",
+          "stage": "realization",
+          "background": "src/assets/trading.png",
+          "next_by_result": {
+            "falls_for_scam": "q3_outcome_falls",
+            "avoids_scam": "q3_outcome_avoids"
+          },
+          "lines": [
+            {
+              "speaker": "Adam/Eve",
+              "text": "Real investments don’t promise guaranteed profit…",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "The stock market involves risk. No one can guarantee returns.",
+              "mood": "speaking"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I almost rushed into it.",
+              "mood": "shocked"
+            }
+          ]
+        },
+        {
+          "id": "q3_outcome_falls",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "falls_for_scam",
+          "background": "src/assets/trading.png",
+          "next": "q3_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "₹10,000 invested via unknown source.",
+              "mood": "worried"
+            },
+            {
+              "speaker": "System",
+              "text": "No returns received. Contact lost.",
+              "mood": "sad"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "I got tricked…",
+              "mood": "sad"
+            },
+            {
+              "speaker": "System",
+              "text": "Always verify before investing.",
+              "mood": "worried"
+            }
+          ]
+        },
+        {
+          "id": "q3_outcome_avoids",
+          "type": "outcome",
+          "stage": "outcome",
+          "result_path": "avoids_scam",
+          "background": "src/assets/trading.png",
+          "next": "q3_lesson",
+          "lines": [
+            {
+              "speaker": "System",
+              "text": "You avoided a risky investment scam.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "Adam/Eve",
+              "text": "Good thing I didn’t rush.",
+              "mood": "happy"
+            },
+            {
+              "speaker": "System",
+              "text": "Smart decisions protect your money.",
+              "mood": "happy"
+            }
+          ]
+        },
+        {
+          "id": "q3_lesson",
+          "type": "lesson",
+          "stage": "lesson",
+          "background": "src/assets/trading.png",
+          "speaker": "System",
+          "title": "Key Takeaways:",
+          "takeaways": [
+            "No one can guarantee stock market returns",
+            "Avoid unknown advisors and tips",
+            "Don’t rush due to pressure",
+            "Always research before investing"
+          ],
+          "complete_text": "Quest Completed: Smart Investor Mindset 📊"
+        }
+      ]
+    }
+  ]
+}

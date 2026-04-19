@@ -120,12 +120,20 @@ export const Auth = (app) => {
     const form          = wrapper.querySelector('#auth-form');
     const passwordInput = wrapper.querySelector('#auth-password');
 
-    const getFormData = () => ({
-        name:     nameInput.value  || (selectedGender === 'male' ? 'Adam' : 'Eve'),
-        email:    emailInput.value,
-        password: passwordInput.value,
-        gender:   selectedGender
-    });
+    const getFormData = () => {
+        const name = nameInput.value || (selectedGender === 'male' ? 'Adam' : 'Eve');
+        const canonicalName = name.trim().toLowerCase();
+        const gender = canonicalName === 'adam'
+            ? 'male'
+            : (canonicalName === 'eve' ? 'female' : selectedGender);
+
+        return {
+            name,
+            email: emailInput.value,
+            password: passwordInput.value,
+            gender
+        };
+    };
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();

@@ -1,4 +1,5 @@
 import { removeImageBackground } from '../app.js';
+import { getPlayerAvatarSrc, isPlayerAvatarCheckerboard } from '../playerText.js';
 
 export const Intro = (app) => {
     const div = document.createElement('div');
@@ -7,7 +8,7 @@ export const Intro = (app) => {
     div.style.padding = '40px';
     div.style.textAlign = 'center';
 
-    const avatarImg = app.state.user.gender === 'male' ? 'src/assets/avatar_male.png' : 'src/assets/avatar_female.png';
+    const avatarImg = getPlayerAvatarSrc(app);
 
     const chapter = app.state.currentChapter || 'start';
     const isLvl1 = chapter.startsWith('lvl1');
@@ -51,8 +52,7 @@ export const Intro = (app) => {
 
     // Process Background Removal
     const avatarElement = div.querySelector('#intro-avatar');
-    const isFemale = app.state.user.gender === 'female';
-    removeImageBackground(avatarImg, isFemale).then(processedSrc => {
+    removeImageBackground(avatarImg, isPlayerAvatarCheckerboard(app)).then(processedSrc => {
         avatarElement.src = processedSrc;
         avatarElement.style.opacity = '1';
     });
