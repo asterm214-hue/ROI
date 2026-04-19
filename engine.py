@@ -34,45 +34,87 @@ class GameEngine:
 
     def process_custom_input(self, text, current_scenario):
         """
-        AI-like processing of user's custom text decisions.
+        Deeply dynamic processing of user's custom decisions.
+        Uses randomized templates and multi-layered keyword analysis.
         """
-        text = text.lower()
-        impact = {'money': 0, 'xp': 15, 'happiness': 5}
-        story = f"You decided to: \"{text}\". The mentor is impressed by your creative thinking!"
-        lesson = "Thinking outside the box is a great trait in finance, as long as you consider the risks."
+        text = text.lower().strip()
+        scenario_text = current_scenario.get('text', '').lower()
         
-        # Keyword-based dynamic logic
-        if any(w in text for w in ['save', 'keep', 'store', 'bank', 'rd', 'fd']):
-            impact['money'] = 0 # No change or small interest
-            impact['xp'] += 10
-            story = f"Choosing to save ('{text}') is usually a wise move! You're securing your future."
-            lesson = "Liquidity (having cash available) helps you grab better opportunities later."
-            
-        elif any(w in text for w in ['spend', 'buy', 'pay', 'order', 'party', 'luxury', 'mall', 'gift']):
-            # Estimate a cost based on current level budget
-            cost = 500
-            if self.user.money >= 50000: cost = 5000 # Level 2
-            elif self.user.money >= 5000: cost = 1000 # Level 1
-                
-            impact['money'] = -cost
-            impact['happiness'] += 15
-            story = f"You made a purchase based on your choice: '{text}'. You spent ₹{cost}."
-            lesson = "Spending on 'wants' is fine, but tracking these small expenses is crucial."
-            
-        elif any(w in text for w in ['invest', 'stock', 'mutual', 'fund', 'crypto', 'gold']):
-            profit = random.randint(-200, 500)
-            impact['money'] = profit
-            impact['risk'] = 10
-            story = f"You explored an investment: '{text}'. Your current return is ₹{profit}."
-            lesson = "Investment is the fastest way to grow wealth, but never invest in something you don't understand."
+        # Base impact
+        impact = {'money': 0, 'xp': 10, 'happiness': 5}
+        
+        # Mentor Personalities/Templates
+        praise = ["Incredible!", "Brilliant move,", "I like your style!", "A very unique perspective.", "Strategic thinking at its best!"]
+        caution = ["Interesting approach,", "A bit risky,", "Think carefully.", "Well, that's one way to do it...", "Be careful with that."]
+        
+        # Determine base tone
+        tone = random.choice(praise) if len(text) > 20 else random.choice(caution)
+        
+        story = f"{tone} You decided to '{text}'."
+        lesson = "Your financial journey is your own. Every unique decision leads to a new lesson."
 
-        elif any(w in text for w in ['negotiate', 'bargain', 'discount', 'cheap', 'offer']):
-            saved = random.randint(50, 200)
+        # Analysis logic
+        handled = False
+        
+        # 1. Negotiation / Bargaining
+        if any(w in text for w in ['negotiate', 'bargain', 'discount', 'cheap', 'offer', 'less']):
+            saved = random.randint(100, 300)
             impact['money'] = saved
-            impact['xp'] += 25
-            story = f"Great move! By negotiating ('{text}'), you actually saved ₹{saved}."
-            lesson = "A penny saved is a penny earned. Good negotiation skills are vital."
-            
+            impact['xp'] += 30
+            story = f"Masterful! By negotiating ('{text}'), you managed to save ₹{saved}. Your friends are impressed!"
+            lesson = "Developing negotiation skills is like giving yourself an immediate pay raise."
+            handled = True
+
+        # 2. Saving / Delaying Gratification
+        elif any(w in text for w in ['save', 'bank', 'later', 'wait', 'future', 'deposit', 'rd', 'fd']):
+            interest = random.randint(10, 50)
+            impact['money'] = interest
+            impact['xp'] += 20
+            story = f"A forward-looking choice! '{text}' helps you build that much-needed safety net. You even earned ₹{interest} in virtual interest!"
+            lesson = "Consistency in saving is the foundation of wealth. The money you don't spend is your most powerful employee."
+            handled = True
+
+        # 3. Aggressive Spending / Luxury
+        elif any(w in text for w in ['buy', 'purchase', 'luxury', 'brand', 'best', 'expensive', 'premium']):
+            cost = random.randint(2000, 5000)
+            impact['money'] = -cost
+            impact['happiness'] += 20
+            story = f"You chose luxury: '{text}'. It feels great, doesn't it? But ₹{cost} has left your wallet."
+            lesson = "It's okay to spend on what you love, provided you've already paid your 'future self' first."
+            handled = True
+
+        # 4. Investment / Growth
+        elif any(w in text for w in ['invest', 'stock', 'share', 'fund', 'gold', 'crypto']):
+            profit = random.randint(-500, 1500)
+            impact['money'] = profit
+            impact['risk'] += 15
+            if profit >= 0:
+                story = f"The market smiles on you! Your investment choice '{text}' yielded a ₹{profit} gain."
+                lesson = "Compound interest is the eighth wonder of the world. He who understands it, earns it."
+            else:
+                story = f"A tough lesson. Your investment '{text}' took a dip of ₹{abs(profit)} today."
+                lesson = "Volatility is the price you pay for long-term growth. Stay the course!"
+            handled = True
+
+        # 5. Helping Others / Social
+        elif any(w in text for w in ['help', 'gift', 'donate', 'friend', 'family', 'treat']):
+            cost = random.randint(500, 1500)
+            impact['money'] = -cost
+            impact['happiness'] += 30
+            impact['xp'] += 15
+            story = f"How kind! Spreading your wealth ('{text}') has bought you immense happiness and social capital."
+            lesson = "Money is a tool, not just for survival, but for building meaningful relationships."
+            handled = True
+
+        # Default fallback for unhandled custom text
+        if not handled:
+            xp_gain = min(50, len(text)) # Reward longer, more thoughtful inputs
+            impact['xp'] += xp_gain
+            story = f"That's a creative move! '{text}' shows you're taking this seriously."
+            if len(text) < 5:
+                story = "You'll need a more detailed plan than that. But at least you're thinking!"
+            lesson = "Unique strategies require unique discipline. Watch how this plays out in the long run."
+
         return impact, impact['money'], story, lesson
 
     def process_choice(self, choice_id, current_scenario, base_impact):

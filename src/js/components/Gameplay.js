@@ -39,7 +39,6 @@ export const Gameplay = (app, node) => {
                 </div>
             </div>
             <div class="top-bar-actions">
-                <button id="skip-scene-btn" class="btn logout-btn" title="Skip Scene">⏭️</button>
                 <button id="nav-map-btn" class="btn logout-btn" title="Back to Map">🗺️</button>
                 <button id="logout-btn" class="btn logout-btn" title="Logout">🚪</button>
             </div>
@@ -178,27 +177,6 @@ export const Gameplay = (app, node) => {
             app.startLevel(app.state.currentChapter);
         };
     }
-
-    div.querySelector('#skip-scene-btn').onclick = () => {
-        app.sound.playSFX('click');
-        clearInterval(typingTimer);
-        const textEl = div.querySelector('#typewriter-text');
-        if (textEl) textEl.innerHTML = storyText;
-        
-        const choicesContainer = div.querySelector('#choices-container');
-        if (choicesContainer && choicesContainer.style.display === 'none') {
-            // If still typing/showing dialogue, show choices immediately
-            choicesContainer.style.display = 'flex';
-            div.querySelectorAll('.choice-btn').forEach((btn, i) => {
-                setTimeout(() => btn.classList.add('fade-in-up'), i * 100);
-            });
-        } else if (node.choices && node.choices.length > 0) {
-            // If already at choices, pick the first one as default
-            app.handleChoice(node.choices[0].id);
-        } else if (node.choices.length === 0) {
-            app.setView('map');
-        }
-    };
 
     const submitCustomAction = () => {
         const input = div.querySelector('#custom-action-input');
