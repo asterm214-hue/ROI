@@ -39,6 +39,7 @@ export const Gameplay = (app, node) => {
                 </div>
             </div>
             <div class="top-bar-actions">
+                <button id="skip-scene-btn" class="btn logout-btn" title="Skip Scene">⏭️</button>
                 <button id="nav-map-btn" class="btn logout-btn" title="Back to Map">🗺️</button>
                 <button id="logout-btn" class="btn logout-btn" title="Logout">🚪</button>
             </div>
@@ -60,11 +61,23 @@ export const Gameplay = (app, node) => {
                 <div id="typewriter-text" class="story-text" style="font-size: 1.1rem; min-height: 60px;"></div>
                 
                 <div id="choices-container" class="choices-container" style="display: none;">
-                    ${node.choices.map((choice, index) => `
-                        <button class="btn choice-btn glass-btn" data-index="${index}" style="background: rgba(255,255,255,0.2); border: 1px solid var(--white); color: var(--dark); text-align: center;">
-                            ${personalizePlayerText(choice.text, app)}
-                        </button>
-                    `).join('')}
+                    <div class="predefined-choices" style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+                        ${node.choices.map((choice, index) => `
+                            <button class="btn choice-btn glass-btn" data-index="${index}" style="background: rgba(255,255,255,0.2); border: 1px solid var(--white); color: var(--dark); text-align: center;">
+                                ${personalizePlayerText(choice.text, app)}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    ${node.choices.length > 0 ? `
+                    <div class="custom-input-container" style="margin-top: 15px; width: 100%; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 15px;">
+                        <div style="font-size: 0.8rem; color: var(--accent); margin-bottom: 8px; font-weight: 600;">OR TYPE YOUR OWN ACTION:</div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="custom-action-input" placeholder="e.g. Try to negotiate a discount..." class="glass-input" style="flex: 1; height: 44px; border-radius: 22px;">
+                            <button id="submit-custom-btn" class="btn btn-primary" style="padding: 0 20px; border-radius: 22px;">Send</button>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
 
                 ${node.choices.length === 0 ? `
@@ -163,6 +176,45 @@ export const Gameplay = (app, node) => {
             speech.stop();
             app.state.currentChapter = app.state.view === 'gameplay' && node.id.startsWith('lvl1') ? 'lvl1_scene1' : 'lvl2_scene1';
             app.startLevel(app.state.currentChapter);
+        };
+    }
+
+    div.querySelector('#skip-scene-btn').onclick = () => {
+        app.sound.playSFX('click');
+        clearInterval(typingTimer);
+        const textEl = div.querySelector('#typewriter-text');
+        if (textEl) textEl.innerHTML = storyText;
+        
+        const choicesContainer = div.querySelector('#choices-container');
+        if (choicesContainer && choicesContainer.style.display === 'none') {
+            // If still typing/showing dialogue, show choices immediately
+            choicesContainer.style.display = 'flex';
+            div.querySelectorAll('.choice-btn').forEach((btn, i) => {
+                setTimeout(() => btn.classList.add('fade-in-up'), i * 100);
+            });
+        } else if (node.choices && node.choices.length > 0) {
+            // If already at choices, pick the first one as default
+            app.handleChoice(node.choices[0].id);
+        } else if (node.choices.length === 0) {
+            app.setView('map');
+        }
+    };
+
+    const submitCustomAction = () => {
+        const input = div.querySelector('#custom-action-input');
+        if (input && input.value.trim()) {
+            app.sound.playSFX('click');
+            app.handleChoice('custom_input', input.value.trim());
+        }
+    };
+
+    const customBtn = div.querySelector('#submit-custom-btn');
+    if (customBtn) customBtn.onclick = submitCustomAction;
+
+    const customInput = div.querySelector('#custom-action-input');
+    if (customInput) {
+        customInput.onkeypress = (e) => {
+            if (e.key === 'Enter') submitCustomAction();
         };
     }
 

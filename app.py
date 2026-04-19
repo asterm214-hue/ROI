@@ -458,16 +458,33 @@ def submit_choice():
     data = request.json
     user_id = data.get('user_id')
     choice_id = data.get('choice_id')
+    custom_text = data.get('custom_text')
     
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
     
     current_scenario = SCENARIOS.get(user.current_chapter)
-    selected_choice = next((c for c in current_scenario['choices'] if c['id'] == choice_id), None)
-    
-    if not selected_choice:
-        return jsonify({"error": "Choice not found"}), 404
+    if not current_scenario:
+        return jsonify({"error": "Scenario not found"}), 404
+
+    selected_choice = None
+    if choice_id != 'custom_input':
+        selected_choice = next((c for c in current_scenario.get('choices', []) if c['id'] == choice_id), None)
+        if not selected_choice:
+            return jsonify({"error": "Choice not found"}), 404
+    else:
+        # For custom input, we simulate a choice and pick a default next chapter
+        current_scenario['custom_text'] = custom_text
+        default_next = "start"
+        if current_scenario.get('choices'):
+            default_next = current_scenario['choices'][0]['next_chapter']
+        
+        selected_choice = {
+            "id": "custom_input",
+            "next_chapter": default_next,
+            "impact": {"xp": 20}
+        }
     
     # Process Impact
     impact = selected_choice.get('impact', {})

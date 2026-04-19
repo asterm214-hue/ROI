@@ -398,7 +398,7 @@ class App {
         this.setView('auth');
     }
 
-    async handleChoice(choiceId) {
+    async handleChoice(choiceId, customText = null) {
         try {
             this.sound.playSFX('click');
             
@@ -422,7 +422,8 @@ class App {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: this.state.user.id,
-                    choice_id: choiceId
+                    choice_id: choiceId,
+                    custom_text: customText
                 })
             });
             const data = await response.json();

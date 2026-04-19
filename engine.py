@@ -32,10 +32,57 @@ class GameEngine:
             
         return 0, "No return generated."
 
+    def process_custom_input(self, text, current_scenario):
+        """
+        AI-like processing of user's custom text decisions.
+        """
+        text = text.lower()
+        impact = {'money': 0, 'xp': 15, 'happiness': 5}
+        story = f"You decided to: \"{text}\". The mentor is impressed by your creative thinking!"
+        lesson = "Thinking outside the box is a great trait in finance, as long as you consider the risks."
+        
+        # Keyword-based dynamic logic
+        if any(w in text for w in ['save', 'keep', 'store', 'bank', 'rd', 'fd']):
+            impact['money'] = 0 # No change or small interest
+            impact['xp'] += 10
+            story = f"Choosing to save ('{text}') is usually a wise move! You're securing your future."
+            lesson = "Liquidity (having cash available) helps you grab better opportunities later."
+            
+        elif any(w in text for w in ['spend', 'buy', 'pay', 'order', 'party', 'luxury', 'mall', 'gift']):
+            # Estimate a cost based on current level budget
+            cost = 500
+            if self.user.money >= 50000: cost = 5000 # Level 2
+            elif self.user.money >= 5000: cost = 1000 # Level 1
+                
+            impact['money'] = -cost
+            impact['happiness'] += 15
+            story = f"You made a purchase based on your choice: '{text}'. You spent ₹{cost}."
+            lesson = "Spending on 'wants' is fine, but tracking these small expenses is crucial."
+            
+        elif any(w in text for w in ['invest', 'stock', 'mutual', 'fund', 'crypto', 'gold']):
+            profit = random.randint(-200, 500)
+            impact['money'] = profit
+            impact['risk'] = 10
+            story = f"You explored an investment: '{text}'. Your current return is ₹{profit}."
+            lesson = "Investment is the fastest way to grow wealth, but never invest in something you don't understand."
+
+        elif any(w in text for w in ['negotiate', 'bargain', 'discount', 'cheap', 'offer']):
+            saved = random.randint(50, 200)
+            impact['money'] = saved
+            impact['xp'] += 25
+            story = f"Great move! By negotiating ('{text}'), you actually saved ₹{saved}."
+            lesson = "A penny saved is a penny earned. Good negotiation skills are vital."
+            
+        return impact, impact['money'], story, lesson
+
     def process_choice(self, choice_id, current_scenario, base_impact):
         """
         Determine outcomes based on the choice explicitly.
         """
+        # Handle Custom Input from Text Box
+        if choice_id == 'custom_input' and 'custom_text' in current_scenario:
+            return self.process_custom_input(current_scenario['custom_text'], current_scenario)
+
         # --- LEVEL 1 (Pocket Money) ---
         if choice_id.startswith('lvl1_'):
             amount = 5000
