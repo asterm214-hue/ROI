@@ -31,11 +31,11 @@ export const Gameplay = (app, node) => {
                 <div class="stat-item glass" title="Money">
                     💰 <span>Money:</span> ₹${app.state.stats.money}
                 </div>
-                <div class="stat-item glass" title="Happiness">
-                    😊 <span>Happiness:</span> ${app.state.stats.happiness}%
-                </div>
-                <div class="stat-item glass" title="Risk">
-                    ⚠️ <span>Risk:</span> ${app.state.stats.risk}%
+                <div class="stat-item glass" title="XP" style="display: flex; align-items: center; gap: 8px;">
+                    ⭐ <span>XP:</span> ${app.state.stats.xp || 0}
+                    <div style="background: rgba(0,0,0,0.1); width: 100px; height: 10px; border-radius: 5px; overflow: hidden; margin-top:2px;">
+                        <div style="background: #17BEBB; width: ${Math.min((app.state.stats.xp || 0) * 2, 100)}%; height: 100%;"></div>
+                    </div>
                 </div>
                 <button id="logout-btn" class="btn glass-btn" style="padding: 5px 12px; font-size: 0.8rem; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3); color: #d63031;">Logout</button>
             </div>

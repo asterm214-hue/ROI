@@ -1534,3 +1534,132 @@ input:focus {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ════════════════════════════════════════════
+   VISUAL NOVEL STYLES
+   ════════════════════════════════════════════ */
+
+.vn-video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+    filter: brightness(0.8);
+}
+
+.vn-dialogue-wrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 900px;
+    z-index: 100;
+}
+
+.vn-dialogue-box {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 30px;
+    padding-top: 40px;
+    color: #fff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    min-height: 180px;
+}
+
+.vn-speaker-name {
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    background: #17BEBB;
+    color: #fff;
+    padding: 8px 24px;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(23, 190, 187, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    display: inline-block;
+}
+
+.vn-story-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.vn-thought-bubble {
+    font-style: italic;
+    color: #d1f5f4;
+    background: rgba(23, 190, 187, 0.15);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border-left: 4px solid #17BEBB;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 15px;
+    display: block;
+    animation: thoughtFloat 3s ease-in-out infinite;
+    font-size: 1.15rem;
+}
+
+@keyframes thoughtFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.vn-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.vn-choice-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vn-choice-btn:hover {
+    background: rgba(23, 190, 187, 0.8);
+    border-color: #fff;
+    transform: translateX(5px);
+}
+
+.vn-avatar {
+    position: fixed;
+    bottom: 0;
+    height: 80vh;
+    z-index: 50;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+}
+
+.vn-avatar.speaking {
+    animation: gameplaySpeak 0.28s ease-in-out infinite alternate;
+}
+
+.vn-avatar-left {
+    left: 5%;
+}
+
+.vn-avatar-right {
+    right: 5%;
+}
+

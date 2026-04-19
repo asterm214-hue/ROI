@@ -24,8 +24,7 @@ class App {
             user: null,
             stats: {
                 money: 0,
-                happiness: 0,
-                risk: 0
+                xp: 0
             },
             currentChapter: 'start',
             currentScenario: null,
@@ -90,12 +89,12 @@ class App {
     async startLevel(chapterId) {
         try {
             // Set starting stats based on level
-            let startStats = { money: 0, happiness: 50, risk: 10 };
-            if (chapterId.startsWith('lvl1')) startStats.money = 5000;
+            let startStats = { money: 0, xp: 0 };
+            if (chapterId.startsWith('lvl1')) startStats.money = 10000;
             else if (chapterId.startsWith('lvl2')) startStats.money = 50000;
             else if (chapterId.startsWith('lvl3')) startStats.money = 500000;
 
-            const response = await fetch(`${this.apiBase}/start-level`, {
+            const response = await fetch(`${this.apiBase}/start_game`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -110,8 +109,7 @@ class App {
             this.state.currentChapter = chapterId;
             this.state.stats = {
                 money: data.user.money,
-                happiness: data.user.happiness,
-                risk: data.user.risk
+                xp: data.user.xp || 0
             };
             this.saveState();
             this.setView('intro');
@@ -331,8 +329,7 @@ class App {
             this.state.user = data.user;
             this.state.stats = {
                 money: data.user.money,
-                happiness: data.user.happiness,
-                risk: data.user.risk
+                xp: data.user.xp || 0
             };
             this.state.completed_levels = data.user.completed_levels || [];
             this.state.currentScenario = data.first_scenario;
@@ -357,8 +354,7 @@ class App {
             this.state.user = data.user;
             this.state.stats = {
                 money: data.user.money,
-                happiness: data.user.happiness,
-                risk: data.user.risk
+                xp: data.user.xp || 0
             };
             this.state.completed_levels = data.user.completed_levels || [];
             this.state.currentScenario = data.current_scenario;
@@ -375,7 +371,7 @@ class App {
     logout() {
         localStorage.removeItem('roi_state');
         this.state.user = null;
-        this.state.stats = { money: 0, happiness: 0, risk: 0 };
+        this.state.stats = { money: 0, xp: 0 };
         this.state.currentChapter = 'start';
         this.state.currentScenario = null;
         this.state.questSummaries = [];
@@ -388,7 +384,7 @@ class App {
 
     async handleChoice(choiceId) {
         try {
-            const response = await fetch(`${this.apiBase}/choice`, {
+            const response = await fetch(`${this.apiBase}/make_choice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -400,8 +396,7 @@ class App {
             
             this.state.stats = {
                 money: data.user.money,
-                happiness: data.user.happiness,
-                risk: data.user.risk
+                xp: data.user.xp || 0
             };
             this.state.completed_levels = data.user.completed_levels || [];
 
@@ -410,13 +405,14 @@ class App {
                 choice: choiceId,
                 impact: data.impact,
                 mentor: data.mentor_opinion,
-                ai_feedback: data.ai_feedback
+                ai_feedback: data.ai_feedback,
+                story_outcome: data.story_outcome
             });
 
             this.state.pendingScenario = data.next_scenario;
             
             // Skip feedback if no impact and no mentor text
-            const hasImpact = data.impact && (data.impact.money || data.impact.happiness || data.impact.risk);
+            const hasImpact = data.impact && (data.impact.money || data.impact.xp);
             const hasMentor = data.mentor_opinion;
             
             if (!hasImpact && !hasMentor) {

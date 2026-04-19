@@ -11,15 +11,15 @@ export const Feedback = (app, historyItem) => {
     div.innerHTML = `
         <h2 style="color: var(--accent); margin-bottom: 10px;">Outcome: ${historyItem.choice}</h2>
         
+        <div class="story-outcome-box" style="margin-bottom: 20px; font-size: 1.1rem; color: var(--dark); font-family: 'Outfit';">
+            ${historyItem.story_outcome ? `<strong>Outcome:</strong> ${historyItem.story_outcome}` : ''}
+        </div>
         <div class="stats-change" style="display: flex; justify-content: space-around; padding: 20px; background: rgba(0,0,0,0.05); border-radius: var(--radius-md); margin-bottom: 30px;">
-            <div style="color: ${(impact.money || 0) >= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Money: ${(impact.money || 0) >= 0 ? '+' : ''}${impact.money || 0}
+            <div style="color: ${(impact.money || 0) >= 0 ? 'green' : 'red'}; font-weight: 700; font-size: 1.2rem;">
+                ${(impact.money || 0) >= 0 ? `+₹${impact.money} profit 📈` : `-₹${Math.abs(impact.money)} loss 📉`}
             </div>
-            <div style="color: ${(impact.happiness || 0) >= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Happiness: ${(impact.happiness || 0) >= 0 ? '+' : ''}${impact.happiness || 0}%
-            </div>
-            <div style="color: ${(impact.risk || 0) <= 0 ? 'green' : 'red'}; font-weight: 700;">
-                Risk: ${(impact.risk || 0) >= 0 ? '+' : ''}${impact.risk || 0}%
+            <div style="color: ${(impact.xp || 0) >= 0 ? 'green' : 'red'}; font-weight: 700; font-size: 1.2rem;">
+                ⭐ ${(impact.xp || 0) >= 0 ? '+' : ''}${impact.xp || 0} XP
             </div>
         </div>
 

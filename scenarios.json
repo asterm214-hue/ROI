@@ -10,169 +10,22 @@
     "id": "lvl1_scene1",
     "background": "src/assets/login_bg.png",
     "speaker": "Adam/Eve",
-    "text": "Yay! I finally got ₹5000 as my pocket money this month. I have so many things I want to buy!",
+    "text": "I just received my ₹10,000 stipend! Now I have to decide how to manage it.",
     "choices": [
       {
-        "id": "lvl1_talk_father",
-        "text": "Talk to Father about it",
-        "next_chapter": "lvl1_father_advice"
-      }
-    ]
-  },
-  "lvl1_father_advice": {
-    "id": "lvl1_father_advice",
-    "background": "src/assets/login_bg.png",
-    "speaker": "Father",
-    "avatar": "src/assets/char_father.png",
-    "text": "That's great, but remember—you shouldn't spend it all. You should save a part of it in an RD (Recurring Deposit). It will help you in the future when you need it for something big.",
-    "choices": [
-      {
-        "id": "rd_query",
-        "text": "What exactly is an RD?",
-        "next_chapter": "lvl1_rd_explain"
-      }
-    ]
-  },
-  "lvl1_rd_explain": {
-    "id": "lvl1_rd_explain",
-    "background": "src/assets/login_bg.png",
-    "speaker": "Father",
-    "avatar": "src/assets/char_father.png",
-    "text": "An RD is a way of saving regularly. You deposit a fixed amount every month. The bank gives you interest, making your money grow. It builds a habit of disciplined saving.",
-    "choices": [
-      {
-        "id": "rd_understand",
-        "text": "So I should start saving now?",
-        "next_chapter": "lvl1_choice_month"
-      }
-    ]
-  },
-  "lvl1_choice_month": {
-    "id": "lvl1_choice_month",
-    "background": "src/assets/office.png",
-    "speaker": "System",
-    "text": "Month 1: You have ₹5000. How much would you like to allocate to your Recurring Deposit (RD)?",
-    "choices": [
-      {
-        "id": "lvl1_save_2000",
-        "text": "Save ₹2000 (Recommended)",
-        "next_chapter": "lvl1_scene2",
-        "impact": { "money": -2000, "happiness": 5, "risk": -10 },
-        "mentorText": "Excellent! You are building a solid foundation for your future."
+        "id": "spend_all",
+        "text": "Spend all",
+        "next_chapter": "lvl2_scene1"
       },
       {
-        "id": "lvl1_save_500",
-        "text": "Save ₹500",
-        "next_chapter": "lvl1_scene2",
-        "impact": { "money": -500, "happiness": 10, "risk": 0 },
-        "mentorText": "It's a start, but you might find it hard to afford big things later."
+        "id": "save_bank",
+        "text": "Save in bank",
+        "next_chapter": "lvl2_scene1"
       },
       {
-        "id": "lvl1_save_0",
-        "text": "Spend it all (₹0 Savings)",
-        "next_chapter": "lvl1_scene2",
-        "impact": { "money": 0, "happiness": 20, "risk": 20 },
-        "mentorText": "Living for the moment... but remember the college trip is coming!"
-      }
-    ]
-  },
-  "lvl1_scene2": {
-    "id": "lvl1_scene2",
-    "background": "src/assets/restaurant.png",
-    "speaker": "Friends",
-    "avatar": "src/assets/char_friend_1_m.png",
-    "text": "Hey! We're going for a party this weekend, everyone's coming! It'll cost about ₹1000. Are you coming?",
-    "choices": [
-      {
-        "id": "party_yes",
-        "text": "Yes, I'm in! (Spend ₹1000)",
-        "next_chapter": "lvl1_scene3",
-        "impact": { "money": -1000, "happiness": 15, "risk": 5 },
-        "mentorText": "Parties are fun, but this is a 'WANT'. Make sure it fits your budget."
-      },
-      {
-        "id": "party_no",
-        "text": "No, I should stick to my budget.",
-        "next_chapter": "lvl1_scene3",
-        "impact": { "money": 0, "happiness": -5, "risk": -5 },
-        "mentorText": "Disciplined! You're prioritizing your long-term goals."
-      }
-    ]
-  },
-  "lvl1_scene3": {
-    "id": "lvl1_scene3",
-    "background": "src/assets/office.png",
-    "speaker": "Friends",
-    "avatar": "src/assets/char_friend_2_f.png",
-    "text": "By the way, we're planning a big trip after 6 months! It will cost around ₹8000. You should start saving extra from now so you don't miss out.",
-    "choices": [
-      {
-        "id": "trip_save_yes",
-        "text": "Yes, start saving (₹1000/month extra)",
-        "next_chapter": "lvl1_scene4",
-        "impact": { "money": -1000, "happiness": 10, "risk": -5 },
-        "mentorText": "Smart! Planning ahead for big expenses is key to financial freedom."
-      },
-      {
-        "id": "trip_save_no",
-        "text": "I'll see later.",
-        "next_chapter": "lvl1_scene4",
-        "impact": { "money": 0, "happiness": -5, "risk": 5 },
-        "mentorText": "Be careful, saving at the last minute is much harder."
-      }
-    ]
-  },
-  "lvl1_scene4": {
-    "id": "lvl1_scene4",
-    "background": "src/assets/office.png",
-    "speaker": "Teacher",
-    "avatar": "src/assets/char_father.png",
-    "text": "You have been assigned a major college project. You'll need to buy materials for ₹1500 to complete it. This is mandatory for your grades.",
-    "choices": [
-      {
-        "id": "buy_materials",
-        "text": "Buy materials (₹1500) - It's a NEED",
-        "next_chapter": "lvl1_6month_skip",
-        "impact": { "money": -1500, "happiness": 5 }
-      }
-    ]
-  },
-  "lvl1_6month_skip": {
-    "id": "lvl1_6month_skip",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "6 Months Later... You have managed your pocket money over the semester. Let's see if your savings are enough for the trip!",
-    "choices": [
-      {
-        "id": "check_savings_6m",
-        "text": "Check Final Results",
-        "next_chapter": "lvl1_trip_outcome"
-      }
-    ]
-  },
-  "lvl1_trip_outcome": {
-    "id": "lvl1_trip_outcome",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "The time for the trip has arrived! It costs ₹8000. Evaluating your financial health...",
-    "choices": [
-      {
-        "id": "finish_lvl1",
-        "text": "See if I can go!",
-        "next_chapter": "lvl1_result_details"
-      }
-    ]
-  },
-  "lvl1_result_details": {
-    "id": "lvl1_result_details",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "Quest Complete! You've learned about RD, Needs vs Wants, and planning for big goals. Now promoting to Level 2: Salary Life.",
-    "choices": [
-      {
-        "id": "goto_map_lvl2",
-        "text": "Return to Map",
-        "next_chapter": "start"
+        "id": "invest_stocks",
+        "text": "Invest in stocks",
+        "next_chapter": "lvl2_scene1"
       }
     ]
   },

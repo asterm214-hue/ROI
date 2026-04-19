@@ -4,6 +4,7 @@ import random
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from models import db, User, UserQuestProgress
+from engine import GameEngine
 
 # Initialize Flask with the root directory as the static folder to serve frontend files
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -428,7 +429,7 @@ def get_scenario(chapter_id):
         return jsonify({"error": "Scenario not found"}), 404
     return jsonify(scenario)
 
-@app.route('/start-level', methods=['POST'])
+@app.route('/start_game', methods=['POST'])
 def start_level_sync():
     data = request.json
     user_id = data.get('user_id')
@@ -443,6 +444,7 @@ def start_level_sync():
     user.money = stats.get('money', user.money)
     user.happiness = stats.get('happiness', user.happiness)
     user.risk = stats.get('risk', user.risk)
+    user.xp = stats.get('xp', user.xp)
     db.session.commit()
     
     return jsonify({
@@ -451,7 +453,7 @@ def start_level_sync():
         "scenario": SCENARIOS.get(chapter_id)
     })
 
-@app.route('/choice', methods=['POST'])
+@app.route('/make_choice', methods=['POST'])
 def submit_choice():
     data = request.json
     user_id = data.get('user_id')
@@ -470,19 +472,25 @@ def submit_choice():
     # Process Impact
     impact = selected_choice.get('impact', {})
     
+    # Use GameEngine
+    engine = GameEngine(user)
+    impact, outcome_money, story, lesson = engine.process_choice(choice_id, current_scenario, impact)
+    
     # Special Logic: Randomness for Investment
     if selected_choice.get('is_random'):
         range_data = selected_choice.get('impact_range', {})
         impact = {
             "money": random.randint(range_data['money'][0], range_data['money'][1]),
             "happiness": random.randint(range_data['happiness'][0], range_data['happiness'][1]),
-            "risk": random.randint(range_data['risk'][0], range_data['risk'][1])
+            "risk": random.randint(range_data['risk'][0], range_data['risk'][1]),
+            "xp": random.randint(10, 20)
         }
 
     # Update User State
     user.money += impact.get('money', 0)
     user.happiness = max(0, min(100, user.happiness + impact.get('happiness', 0)))
     user.risk = max(0, min(100, user.risk + impact.get('risk', 0)))
+    user.xp += impact.get('xp', 0)
     
     # Update Chapter
     next_node = selected_choice['next_chapter']
@@ -524,9 +532,10 @@ def submit_choice():
         "status": "success",
         "user": user.to_dict(),
         "impact": impact,
-        "mentor_opinion": selected_choice.get('mentorText'),
+        "mentor_opinion": lesson if lesson else selected_choice.get('mentorText'),
         "ai_feedback": get_mentor_feedback(user),
-        "next_scenario": SCENARIOS.get(next_node)
+        "next_scenario": SCENARIOS.get(next_node),
+        "story_outcome": story
     })
 
 @app.route('/user/<int:user_id>', methods=['GET'])

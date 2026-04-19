@@ -14,6 +14,7 @@ class User(db.Model):
     money = db.Column(db.Integer, default=30000)
     happiness = db.Column(db.Integer, default=50)
     risk = db.Column(db.Integer, default=10)
+    xp = db.Column(db.Integer, default=0)
     current_chapter = db.Column(db.String(50), default='start')
     completed_levels = db.Column(db.String(200), default='[]')
     
@@ -32,6 +33,7 @@ class User(db.Model):
             "money": self.money,
             "happiness": self.happiness,
             "risk": self.risk,
+            "xp": self.xp,
             "current_chapter": self.current_chapter,
             "completed_levels": json.loads(self.completed_levels) if self.completed_levels else []
         }
