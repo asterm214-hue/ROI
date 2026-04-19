@@ -10,22 +10,164 @@
     "id": "lvl1_scene1",
     "background": "src/assets/login_bg.png",
     "speaker": "Adam/Eve",
-    "text": "I just received my ₹10,000 stipend! Now I have to decide how to manage it.",
+    "text": "Yay! I got ₹5000 as my pocket money this month.",
     "choices": [
       {
-        "id": "spend_all",
-        "text": "Spend all",
-        "next_chapter": "lvl2_scene1"
+        "id": "lvl1_tell_father",
+        "text": "Tell Father about it",
+        "next_chapter": "lvl1_father_rd"
+      }
+    ]
+  },
+  "lvl1_father_rd": {
+    "id": "lvl1_father_rd",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "That's great, but remember—you shouldn't spend it all. You should save a part of it in an RD, a recurring deposit. It will help you in the future.",
+    "choices": [
+      {
+        "id": "lvl1_what_rd",
+        "text": "What exactly is an RD?",
+        "next_chapter": "lvl1_rd_explain"
+      }
+    ]
+  },
+  "lvl1_rd_explain": {
+    "id": "lvl1_rd_explain",
+    "background": "src/assets/login_bg.png",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "An RD, or Recurring Deposit, is a way of saving money regularly. You deposit a fixed amount every month for a certain period of time. The bank gives you interest, so your total amount grows over time and builds a habit of disciplined saving.",
+    "choices": [
+      {
+        "id": "lvl1_start_budget",
+        "text": "I understand! Let's plan my month.",
+        "next_chapter": "lvl1_choice_month"
+      }
+    ]
+  },
+  "lvl1_choice_month": {
+    "id": "lvl1_choice_month",
+    "background": "src/assets/login_bg.png",
+    "speaker": "System",
+    "text": "You have ₹5000 this month. Choose how much you want to allocate to Savings (RD) and Expenditure.",
+    "choices": [
+      {
+        "id": "lvl1_save_high",
+        "text": "Save ₹3000, Spend ₹2000",
+        "next_chapter": "lvl1_party_invite",
+        "impact": { "money": -3000, "xp": 20 },
+        "mentorText": "Excellent! You're following the RD advice. Saving ₹3000 is a big step!"
       },
       {
-        "id": "save_bank",
-        "text": "Save in bank",
-        "next_chapter": "lvl2_scene1"
+        "id": "lvl1_save_low",
+        "text": "Save ₹500, Spend ₹4500",
+        "next_chapter": "lvl1_party_invite",
+        "impact": { "money": -500, "xp": 5 },
+        "mentorText": "Saving a little is better than nothing, but will it be enough for your future goals?"
+      }
+    ]
+  },
+  "lvl1_party_invite": {
+    "id": "lvl1_party_invite",
+    "background": "src/assets/restaurant.png",
+    "speaker": "Friends",
+    "avatar": "src/assets/char_friend_1_m.png",
+    "text": "Hey! We're going for a party this weekend, are you coming? (It sounds fun… but should I spend my money on this?)",
+    "choices": [
+      {
+        "id": "lvl1_party_yes",
+        "text": "Yes, I'm coming! (Spend ₹1000)",
+        "next_chapter": "lvl1_trip_info",
+        "impact": { "money": -1000, "happiness": 20, "xp": 5 },
+        "mentorText": "Balance is key, but don't blow your budget!"
       },
       {
-        "id": "invest_stocks",
-        "text": "Invest in stocks",
-        "next_chapter": "lvl2_scene1"
+        "id": "lvl1_party_no",
+        "text": "No, I'll pass.",
+        "next_chapter": "lvl1_trip_info",
+        "impact": { "money": 0, "happiness": -5, "xp": 10 },
+        "mentorText": "Great self-control! This money can go towards your bigger goals."
+      }
+    ]
+  },
+  "lvl1_trip_info": {
+    "id": "lvl1_trip_info",
+    "background": "src/assets/restaurant.png",
+    "speaker": "Friends",
+    "avatar": "src/assets/char_friend_2_f.png",
+    "text": "By the way, we're planning a trip after a few months! You should start saving from now so you can join us.",
+    "choices": [
+      {
+        "id": "lvl1_trip_save_yes",
+        "text": "Yes, I want to start saving for the trip!",
+        "next_chapter": "lvl1_college_needs",
+        "impact": { "money": -1000, "xp": 15 },
+        "mentorText": "Sinking funds are great for planned expenses like trips!"
+      },
+      {
+        "id": "lvl1_trip_save_no",
+        "text": "No, I'll see later.",
+        "next_chapter": "lvl1_college_needs",
+        "impact": { "money": 0, "xp": 0 },
+        "mentorText": "If you don't start now, you might miss it!"
+      }
+    ]
+  },
+  "lvl1_college_needs": {
+    "id": "lvl1_college_needs",
+    "background": "src/assets/office.png",
+    "speaker": "Teacher",
+    "avatar": "src/assets/char_mother.png",
+    "text": "You have been assigned a project. Make sure you complete it on time. (I'll need to buy materials. This is a NEED. Money will be spent from your budget.)",
+    "choices": [
+      {
+        "id": "lvl1_buy_materials",
+        "text": "Buy materials (Spend ₹500)",
+        "next_chapter": "lvl1_summary",
+        "impact": { "money": -500, "xp": 10 },
+        "mentorText": "Always account for your project needs."
+      }
+    ]
+  },
+  "lvl1_summary": {
+    "id": "lvl1_summary",
+    "background": "src/assets/login_bg.png",
+    "speaker": "System",
+    "text": "Time period completed. Here is your summary for the semester.",
+    "choices": [
+      {
+        "id": "lvl1_view_outcome",
+        "text": "Am I going on the trip?",
+        "next_chapter": "lvl1_trip_outcome"
+      }
+    ]
+  },
+  "lvl1_trip_outcome": {
+    "id": "lvl1_trip_outcome",
+    "background": "src/assets/trading.png",
+    "speaker": "System",
+    "text": "Trip day is here! Let's see if your savings were enough...",
+    "choices": [
+      {
+        "id": "lvl1_check_savings",
+        "text": "Check Results",
+        "next_chapter": "lvl1_final_result"
+      }
+    ]
+  },
+  "lvl1_final_result": {
+    "id": "lvl1_final_result",
+    "background": "src/assets/trading.png",
+    "speaker": "System",
+    "text": "Level 1 Complete! Promoting to Level 2...",
+    "choices": [
+      {
+        "id": "lvl1_goto_lvl2",
+        "text": "Start Level 2 (Get ₹50,000 Salary)",
+        "next_chapter": "lvl2_scene1",
+        "impact": { "money": 50000, "xp": 50 }
       }
     ]
   },
@@ -33,11 +175,11 @@
     "id": "lvl2_scene1",
     "background": "src/assets/login_bg.png",
     "speaker": "Adam/Eve",
-    "text": "I just received my first salary — ₹50,000! I feel like I'm on top of the world. Time to celebrate!",
+    "text": "I just received my first salary — ₹50,000!",
     "choices": [
       {
-        "id": "lvl2_celebrate",
-        "text": "Go out with friends to celebrate",
+        "id": "lvl2_celebrate_talk",
+        "text": "Celebrate!",
         "next_chapter": "lvl2_father_call"
       }
     ]
@@ -47,118 +189,104 @@
     "background": "src/assets/login_bg.png",
     "speaker": "Father",
     "avatar": "src/assets/char_father.png",
-    "text": "Congratulations on your first salary, beta! I'm proud. But remember, managing a salary is different. Try the 50-30-20 rule: 50% for Needs, 30% for Wants, and 20% for Savings.",
+    "text": "Hello beta, got your first salary? I'm proud of you. But now comes the important part—managing it. Try dividing your money into three parts—needs, wants, and savings.",
     "choices": [
       {
-        "id": "lvl2_503020_query",
-        "text": "How does the 50-30-20 rule work exactly?",
-        "next_chapter": "lvl2_503020_explain"
-      }
-    ]
-  },
-  "lvl2_503020_explain": {
-    "id": "lvl2_503020_explain",
-    "background": "src/assets/login_bg.png",
-    "speaker": "Father",
-    "avatar": "src/assets/char_father.png",
-    "text": "It's simple: Spend ₹25,000 on Needs (rent, bills), ₹15,000 on Wants (movies, hobbies), and save ₹10,000 for your future and emergencies.",
-    "choices": [
-      {
-        "id": "lvl2_start_month",
-        "text": "Let's try following the rule!",
+        "id": "lvl2_balance_query",
+        "text": "So I just have to balance it?",
         "next_chapter": "lvl2_choice_month"
       }
     ]
   },
   "lvl2_choice_month": {
     "id": "lvl2_choice_month",
-    "background": "src/assets/office.png",
+    "background": "src/assets/login_bg.png",
     "speaker": "System",
-    "text": "Month 1 Salary (₹50,000): How will you allocate your budget?",
+    "text": "You received ₹50,000 this month. How would you like to use it?",
     "choices": [
       {
-        "id": "rule_correct",
-        "text": "Apply 50-30-20 (Save ₹10,000)",
-        "next_chapter": "lvl2_emi_trap",
-        "impact": { "money": -10000, "happiness": 10, "risk": -15 },
-        "mentorText": "Perfect! This balances your present joy with future security."
+        "id": "lvl2_save_smart",
+        "text": "High Savings (₹15,000), Low Wants",
+        "next_chapter": "lvl2_emi_offer",
+        "impact": { "money": -15000, "xp": 25, "risk": -10 },
+        "mentorText": "Aggressive saving early on builds a massive safety net!"
       },
       {
-        "id": "rule_risky",
-        "text": "Spend 80% on Wants, 0% Savings",
-        "next_chapter": "lvl2_emi_trap",
-        "impact": { "money": 0, "happiness": 30, "risk": 25 },
-        "mentorText": "Living large! But what happens if an emergency strikes?"
+        "id": "lvl2_save_normal",
+        "text": "Balanced (₹10,000 Savings)",
+        "next_chapter": "lvl2_emi_offer",
+        "impact": { "money": -10000, "xp": 15, "risk": 0 },
+        "mentorText": "A healthy balance for a young professional."
       }
     ]
   },
-  "lvl2_emi_trap": {
-    "id": "lvl2_emi_trap",
+  "lvl2_emi_offer": {
+    "id": "lvl2_emi_offer",
     "background": "src/assets/office.png",
     "speaker": "Friend",
     "avatar": "src/assets/char_friend_1_m.png",
-    "text": "Look at this new flagship phone! It's ₹60,000, but you can get it for just ₹5000 EMI per month. It's basically free!",
+    "text": "A new phone just launched. You can get it on ₹5,000 EMI.",
     "choices": [
       {
-        "id": "emi_yes",
-        "text": "Buy it on EMI (₹5000/month)",
-        "next_chapter": "lvl2_emi_warning",
-        "impact": { "money": -5000, "happiness": 25, "risk": 15 },
-        "mentorText": "EMIs are attractive but they eat into your future monthly budget."
-      },
-      {
-        "id": "emi_no",
-        "text": "No, I'll save up and buy it later.",
-        "next_chapter": "lvl2_needs_quiz",
-        "impact": { "money": 0, "happiness": -5, "risk": -10 },
-        "mentorText": "Wise choice. Avoid the debt trap early in your career."
+        "id": "lvl2_phone_emi",
+        "text": "Check it out at home",
+        "next_chapter": "lvl2_emi_talk"
       }
     ]
   },
-  "lvl2_emi_warning": {
-    "id": "lvl2_emi_warning",
+  "lvl2_emi_talk": {
+    "id": "lvl2_emi_talk",
     "background": "src/assets/login_bg.png",
     "speaker": "Father",
     "avatar": "src/assets/char_father.png",
-    "text": "Careful, beta. Multiple small EMIs can slowly drain your salary until you have nothing left for savings.",
+    "text": "Thinking of buying something? Small payments feel easy, but they continue every month. Better think before saying yes.",
     "choices": [
       {
-        "id": "emi_understood",
-        "text": "I understand now.",
-        "next_chapter": "lvl2_needs_quiz"
+        "id": "emi_yes",
+        "text": "Yes, buy the phone (₹5000/month)",
+        "next_chapter": "lvl2_quiz_intro",
+        "impact": { "money": -5000, "happiness": 25, "risk": 15 },
+        "mentorText": "EMIs are debt. They limit your future freedom."
+      },
+      {
+        "id": "emi_no",
+        "text": "No, I'll pass.",
+        "next_chapter": "lvl2_quiz_intro",
+        "impact": { "money": 0, "happiness": -5, "risk": -10 },
+        "mentorText": "Avoiding unnecessary debt is the first rule of wealth."
       }
     ]
   },
-  "lvl2_needs_quiz": {
-    "id": "lvl2_needs_quiz",
+  "lvl2_quiz_intro": {
+    "id": "lvl2_quiz_intro",
     "background": "src/assets/office.png",
     "speaker": "System",
-    "text": "Time for a quick quiz! Classify these items as NEED or WANT.",
+    "text": "Let's try a quick activity. Select whether each is a NEED or a WANT.",
     "choices": [
       {
-        "id": "quiz_q1",
-        "text": "Rent, Groceries, Electricity Bill",
-        "next_chapter": "lvl2_quiz_a1"
+        "id": "lvl2_start_quiz",
+        "text": "Start Activity",
+        "next_chapter": "lvl2_quiz_q1"
       }
     ]
   },
-  "lvl2_quiz_a1": {
-    "id": "lvl2_quiz_a1",
+  "lvl2_quiz_q1": {
+    "id": "lvl2_quiz_q1",
     "background": "src/assets/office.png",
     "speaker": "System",
-    "text": "Classify: Rent, Groceries, Electricity Bill",
+    "text": "Rent & Groceries?",
     "choices": [
       {
         "id": "q1_need",
-        "text": "These are NEEDS",
+        "text": "NEED",
         "next_chapter": "lvl2_quiz_q2",
-        "impact": { "happiness": 5, "risk": -5 }
+        "impact": { "xp": 10 }
       },
       {
         "id": "q1_want",
-        "text": "These are WANTS",
+        "text": "WANT",
         "next_chapter": "lvl2_quiz_q2",
-        "impact": { "happiness": -5, "risk": 5 }
+        "impact": { "xp": -5 }
       }
     ]
   },
@@ -166,72 +294,34 @@
     "id": "lvl2_quiz_q2",
     "background": "src/assets/office.png",
     "speaker": "System",
-    "text": "Classify: Designer shoes, Gaming console, Netflix subscription",
+    "text": "Movie night & New headphones?",
     "choices": [
       {
         "id": "q2_want",
-        "text": "These are WANTS",
-        "next_chapter": "lvl2_emergency_fund",
-        "impact": { "happiness": 5, "risk": -5 }
+        "text": "WANT",
+        "next_chapter": "lvl2_quiz_q3",
+        "impact": { "xp": 10 }
       },
       {
         "id": "q2_need",
-        "text": "These are NEEDS",
-        "next_chapter": "lvl2_emergency_fund",
-        "impact": { "happiness": -5, "risk": 5 }
+        "text": "NEED",
+        "next_chapter": "lvl2_quiz_q3",
+        "impact": { "xp": -5 }
       }
     ]
   },
-  "lvl2_emergency_fund": {
-    "id": "lvl2_emergency_fund",
-    "background": "src/assets/login_bg.png",
-    "speaker": "Father",
-    "avatar": "src/assets/char_father.png",
-    "text": "One more thing: Always build an Emergency Fund. Life is unpredictable, and having 3-6 months of expenses saved can save you from high-interest loans later.",
-    "choices": [
-      {
-        "id": "ef_start",
-        "text": "I'll start building my emergency fund today!",
-        "next_chapter": "lvl2_6month_skip"
-      }
-    ]
-  },
-  "lvl2_6month_skip": {
-    "id": "lvl2_6month_skip",
-    "background": "src/assets/trading.png",
+  "lvl2_quiz_q3": {
+    "id": "lvl2_quiz_q3",
+    "background": "src/assets/office.png",
     "speaker": "System",
-    "text": "6 Months Later... Your car broke down suddenly! The repair bill is ₹20,000. Do you have enough in your emergency fund?",
+    "text": "Medical expense & Weekend outing?",
     "choices": [
       {
-        "id": "check_emergency_6m",
-        "text": "Check if my savings cover it",
-        "next_chapter": "lvl2_emergency_outcome"
-      }
-    ]
-  },
-  "lvl2_emergency_outcome": {
-    "id": "lvl2_emergency_outcome",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "Assessing your savings and EMI commitments...",
-    "choices": [
-      {
-        "id": "finish_lvl2",
-        "text": "View Final Summary",
-        "next_chapter": "lvl2_final_summary"
-      }
-    ]
-  },
-  "lvl2_final_summary": {
-    "id": "lvl2_final_summary",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "Level 2 complete! You've mastered the 50-30-20 rule, avoided the EMI trap, and understood the value of an emergency fund.",
-    "choices": [
-      {
-        "id": "goto_map_lvl3",
-        "text": "Return to Map",
-        "next_chapter": "start"
+        "id": "q3_medical_need",
+        "text": "Medical is NEED, Outing is WANT",
+        "next_chapter": "lvl3_scene1",
+        "impact": { "xp": 20, "money": 20000 },
+        "mentorText": "Level 2 Cleared! You've received a bonus and are moving to Level 3."
       }
     ]
   },
@@ -240,103 +330,74 @@
     "background": "src/assets/restaurant.png",
     "speaker": "Friend",
     "avatar": "src/assets/char_friend_1_m.png",
-    "text": "Hey! Let's split the bill for that dinner. I'll pay, you send me your part.",
+    "text": "I'll pay, you send me your part. Wait, I'll just use my card. Use credit, it's easier. (Debit or credit... what's the real difference?)",
     "choices": [
       {
-        "id": "lvl3_use_card",
-        "text": "Wait, I'll just use my card.",
-        "next_chapter": "lvl3_card_confusion"
+        "id": "lvl3_card_query",
+        "text": "Ask Father about cards",
+        "next_chapter": "lvl3_father_cards"
       }
     ]
   },
-  "lvl3_card_confusion": {
-    "id": "lvl3_card_confusion",
+  "lvl3_father_cards": {
+    "id": "lvl3_father_cards",
     "background": "src/assets/restaurant.png",
-    "speaker": "Friend",
-    "avatar": "src/assets/char_friend_1_m.png",
-    "text": "Use credit, it's easier. You don't have to pay right now.",
-    "choices": [
-      {
-        "id": "lvl3_what_diff",
-        "text": "Debit or credit... what's the real difference?",
-        "next_chapter": "lvl3_card_explain"
-      }
-    ]
-  },
-  "lvl3_card_explain": {
-    "id": "lvl3_card_explain",
-    "background": "src/assets/restaurant.png",
-    "speaker": "Friend",
-    "avatar": "src/assets/char_friend_1_m.png",
-    "text": "Debit uses your own money from your account instantly. Credit lets you spend now and pay the bank later. It's like a short-term loan.",
+    "speaker": "Father",
+    "avatar": "src/assets/char_father.png",
+    "text": "Debit uses your own money from your account. Credit lets you spend now and pay later. It's useful, but only if you stay in control.",
     "choices": [
       {
         "id": "use_debit",
-        "text": "Use Debit Card (My own money)",
-        "next_chapter": "lvl3_bank_talk",
-        "impact": { "money": -1000, "happiness": 5, "risk": -5 },
-        "mentorText": "Good. Using your own money keeps you out of depth."
+        "text": "Use Debit Card (My Money)",
+        "next_chapter": "lvl3_bank_savings",
+        "impact": { "money": -1000, "xp": 10 }
       },
       {
         "id": "use_credit",
-        "text": "Use Credit Card (Spend now, pay later)",
-        "next_chapter": "lvl3_bank_talk",
-        "impact": { "money": 0, "happiness": 10, "risk": 10 },
-        "mentorText": "Pay attention! This money isn't yours. You'll have to pay it back at the end of the month."
+        "text": "Use Credit Card (Bank Money)",
+        "next_chapter": "lvl3_bank_savings",
+        "impact": { "money": 0, "xp": 5, "risk": 15 }
       }
     ]
   },
-  "lvl3_bank_talk": {
-    "id": "lvl3_bank_talk",
-    "background": "src/assets/office.png",
-    "speaker": "Adam/Eve",
-    "text": "Most of my money just sits in my savings account... Does it even do anything?",
-    "choices": [
-      {
-        "id": "talk_elder_brother",
-        "text": "Ask Elder Brother about it",
-        "next_chapter": "lvl3_brother_advice"
-      }
-    ]
-  },
-  "lvl3_brother_advice": {
-    "id": "lvl3_brother_advice",
+  "lvl3_bank_savings": {
+    "id": "lvl3_bank_savings",
     "background": "src/assets/office.png",
     "speaker": "Elder Brother",
     "avatar": "src/assets/char_friend_1_m.png",
-    "text": "That's your savings account. It gives you interest on your money. It grows, but very slowly. It's safe, but not very exciting if you want to build wealth.",
+    "text": "Most of my money just sits in my account... Does it even do anything? That's your savings account beta, it earns interest. It grows slowly.",
     "choices": [
       {
-        "id": "invest_query",
-        "text": "Is there a way to make it grow faster?",
+        "id": "lvl3_invest_query",
+        "text": "There has to be more!",
         "next_chapter": "lvl3_invest_intro"
       }
     ]
   },
   "lvl3_invest_intro": {
     "id": "lvl3_invest_intro",
-    "background": "src/assets/office.png",
+    "background": "src/assets/trading.png",
     "speaker": "Friend",
     "avatar": "src/assets/char_friend_2_f.png",
-    "text": "Bro, I started investing in mutual funds and stocks and made some good profit! You should try it too.",
+    "text": "Bro I invested and made profit! In mutual funds, stocks... stuff like that. I want to start investing... but how?",
     "choices": [
       {
-        "id": "invest_learn",
-        "text": "What are my options?",
+        "id": "lvl3_invest_learn",
+        "text": "Ask about options",
         "next_chapter": "lvl3_invest_options"
       }
     ]
   },
   "lvl3_invest_options": {
     "id": "lvl3_invest_options",
-    "background": "src/assets/login_bg.png",
+    "background": "src/assets/trading.png",
     "speaker": "Father",
     "avatar": "src/assets/char_father.png",
-    "text": "Start simple. FD (Fixed Deposit) is safe with fixed returns. Mutual Funds are managed by professionals. Stocks are high risk but can give huge returns.",
+    "text": "Start simple. FD is safe. Mutual Funds are managed. Stocks are risky. More return = more risk. You choose based on comfort.",
     "choices": [
       {
-        "id": "start_investing",
-        "text": "I'm ready to invest ₹500,000!",
+        "id": "lvl3_invest_start",
+        "text": "Invest ₹20,000!",
         "next_chapter": "lvl3_invest_choice"
       }
     ]
@@ -345,53 +406,37 @@
     "id": "lvl3_invest_choice",
     "background": "src/assets/trading.png",
     "speaker": "System",
-    "text": "You have ₹500,000 in savings. How would you like to invest it?",
+    "text": "You have ₹20,000 savings. What will you do?",
     "choices": [
       {
         "id": "invest_fd",
-        "text": "Fixed Deposit (Safe, Steady)",
-        "next_chapter": "lvl3_time_lapse",
-        "impact": { "money": -20000, "happiness": 5, "risk": -10 },
-        "mentorText": "Reliable and safe. A great foundation."
+        "text": "Put in FD (Safe)",
+        "next_chapter": "lvl3_lapse",
+        "impact": { "money": -20000, "xp": 10, "risk": -10 }
       },
       {
         "id": "invest_mf",
-        "text": "Mutual Funds (Balanced)",
-        "next_chapter": "lvl3_time_lapse",
-        "impact": { "money": -20000, "happiness": 10, "risk": 5 },
-        "mentorText": "Diversified! A professional approach to growth."
+        "text": "Invest in Mutual Funds",
+        "next_chapter": "lvl3_lapse",
+        "impact": { "money": -20000, "xp": 20, "risk": 5 }
       },
       {
-        "id": "invest_stocks",
-        "text": "Stocks (High Risk, High Return)",
-        "next_chapter": "lvl3_time_lapse",
-        "impact": { "money": -20000, "happiness": 15, "risk": 20 },
-        "mentorText": "Going for the gold! Be prepared for market volatility."
+        "id": "invest_stocks_lvl3",
+        "text": "Invest in Stocks (Risky)",
+        "next_chapter": "lvl3_lapse",
+        "impact": { "money": -20000, "xp": 30, "risk": 20 }
       }
     ]
   },
-  "lvl3_time_lapse": {
-    "id": "lvl3_time_lapse",
+  "lvl3_lapse": {
+    "id": "lvl3_lapse",
     "background": "src/assets/trading.png",
     "speaker": "System",
-    "text": "3 Months Later... Let's see how your investments performed.",
+    "text": "3 months later... Let's see how your investments performed.",
     "choices": [
       {
-        "id": "check_returns",
-        "text": "Check Final Results",
-        "next_chapter": "lvl3_outcome"
-      }
-    ]
-  },
-  "lvl3_outcome": {
-    "id": "lvl3_outcome",
-    "background": "src/assets/trading.png",
-    "speaker": "System",
-    "text": "Assessing market performance and calculating your wealth growth...",
-    "choices": [
-      {
-        "id": "finish_lvl3",
-        "text": "View Realisation",
+        "id": "lvl3_view_realisation",
+        "text": "Check Results",
         "next_chapter": "lvl3_realisation"
       }
     ]
@@ -400,10 +445,10 @@
     "id": "lvl3_realisation",
     "background": "src/assets/login_bg.png",
     "speaker": "Adam/Eve",
-    "text": "I get it now. Saving keeps money safe, but investing helps it grow. And credit needs to be controlled wisely!",
+    "text": "Saving keeps money safe. Credit needs control. But investing helps money grow! I made financial choices and saw their impact.",
     "choices": [
       {
-        "id": "goto_map_lvl4",
+        "id": "finish_lvl3",
         "text": "Return to Map",
         "next_chapter": "start"
       }

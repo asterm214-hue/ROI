@@ -242,6 +242,7 @@ export const QuestGameplay = (app) => {
         };
 
         nextBtn.onclick = () => {
+            app.sound.playSFX('click');
             speech.stop();
             if (lineIndex < activeScene.lines.length - 1) {
                 lineIndex += 1;
@@ -289,6 +290,7 @@ export const QuestGameplay = (app) => {
         const feedback = panel.querySelector('#quest-choice-feedback');
         panel.querySelectorAll('.quest-choice-btn').forEach(button => {
             button.onclick = async () => {
+                app.sound.playSFX('click');
                 speech.stop();
                 const selectedChoice = activeScene.choices.find(choice => choice.id === button.dataset.choiceId);
                 panel.querySelectorAll('.quest-choice-btn').forEach(item => {
@@ -348,6 +350,7 @@ export const QuestGameplay = (app) => {
         panel.querySelectorAll('.quest-quiz-item').forEach(itemEl => {
             itemEl.querySelectorAll('button[data-answer]').forEach(button => {
                 button.onclick = () => {
+                    app.sound.playSFX('click');
                     const itemId = itemEl.dataset.itemId;
                     answers[itemId] = button.dataset.answer;
                     itemEl.querySelectorAll('button[data-answer]').forEach(item => item.classList.remove('selected'));
@@ -453,6 +456,7 @@ export const QuestGameplay = (app) => {
     };
 
     div.querySelector('#quest-back-map').onclick = () => {
+        app.sound.playSFX('click');
         clearInterval(typingTimer);
         clearTimeout(speechFallbackTimer);
         speech.stop();

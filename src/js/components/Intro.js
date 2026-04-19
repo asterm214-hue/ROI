@@ -45,6 +45,7 @@ export const Intro = (app) => {
     `;
 
     div.querySelector('#start-btn').onclick = () => {
+        app.sound.playSFX('click');
         const newName = div.querySelector('#intro-name').value;
         if (newName) app.updateUser({ name: newName });
         app.setView('gameplay');

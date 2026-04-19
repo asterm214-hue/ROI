@@ -37,9 +37,8 @@ export const Map = (app) => {
             <div class="map-title-pill">ROI <span style="font-style: italic; color: var(--primary);">Quest</span></div>
             <div class="map-stats-bar">
                 <button class="map-logout-btn" id="map-logout-btn">Logout</button>
-                <div class="map-stat-item">💰 <span>${activeLevel.num === 1 ? 5000 : (activeLevel.num === 2 ? 50000 : (activeLevel.num === 3 ? 500000 : app.state.stats.money))}</span></div>
-                <div class="map-stat-item">😊 <span>50</span></div>
-                <div class="map-stat-item">⚠️ <span>10</span></div>
+                <div class="map-stat-item">💰 <span>₹${app.state.stats.money}</span></div>
+                <div class="map-stat-item">⭐ <span>${app.state.stats.xp || 0} XP</span></div>
             </div>
         </div>
 
@@ -97,6 +96,7 @@ export const Map = (app) => {
     // Interaction logic
     div.querySelectorAll('.map-level-node:not(.locked)').forEach(node => {
         node.onclick = () => {
+            app.sound.playSFX('click');
             const num = parseInt(node.dataset.num);
             const label = node.dataset.label;
             const desc = node.dataset.desc;
@@ -107,18 +107,12 @@ export const Map = (app) => {
             div.querySelector('#info-title').textContent = label;
             div.querySelector('#info-desc').textContent = desc;
             
-            // Update stats bar to reflect level's starting state
+            // Update stats bar to reflect actual state
             const statsBar = div.querySelector('.map-stats-bar');
-            let previewMoney = app.state.stats.money;
-            if (num === 1) previewMoney = 5000;
-            if (num === 2) previewMoney = 50000;
-            if (num === 3) previewMoney = 500000;
-            
             statsBar.innerHTML = `
                 <button class="map-logout-btn" id="map-logout-btn">Logout</button>
-                <div class="map-stat-item">💰 <span>${previewMoney}</span></div>
-                <div class="map-stat-item">😊 <span>50</span></div>
-                <div class="map-stat-item">⚠️ <span>10</span></div>
+                <div class="map-stat-item">💰 <span>₹${app.state.stats.money}</span></div>
+                <div class="map-stat-item">⭐ <span>${app.state.stats.xp || 0} XP</span></div>
             `;
             statsBar.querySelector('#map-logout-btn').onclick = () => {
                 app.logout();
@@ -133,10 +127,12 @@ export const Map = (app) => {
     });
 
     div.querySelector('#resume-btn').onclick = () => {
+        app.sound.playSFX('click');
         app.startLevel(activeLevel.chapter);
     };
 
     div.querySelector('#map-quest-card').onclick = () => {
+        app.sound.playSFX('click');
         app.setView('questSelection');
     };
 

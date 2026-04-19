@@ -265,8 +265,8 @@ def complete_quest(quest_id):
         "outcome": quest.get("outcomes", {}).get(result_path)
     })
 
-# Load Scenarios
-with open(os.path.join(_base_dir, 'scenarios.json'), 'r') as f:
+# Load Scenarios (Added UTF-8 encoding for currency symbols)
+with open(os.path.join(_base_dir, 'scenarios.json'), 'r', encoding='utf-8') as f:
     SCENARIOS = json.load(f)
 
 # Load Quest Mode content

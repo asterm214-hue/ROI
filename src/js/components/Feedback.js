@@ -1,40 +1,96 @@
 export const Feedback = (app, historyItem) => {
     const div = document.createElement('div');
-    div.className = 'feedback-view glass fade-in';
-    div.style.maxWidth = '500px';
-    div.style.padding = '40px';
-    div.style.textAlign = 'center';
-
+    div.className = 'feedback-overlay fade-in';
+    
     const impact = historyItem.impact;
-    const isPositive = impact.money >= 0 && impact.happiness >= 0;
+    const isLoss = (impact.money || 0) < 0;
+    const isProfit = (impact.money || 0) > 0;
+    
+    // Play appropriate sound
+    if (isProfit) app.sound.playSFX('profit');
+    else if (isLoss) app.sound.playSFX('loss');
+    else app.sound.playSFX('click');
+
+    // Character emoji feedback
+    let emoji = '😎'; 
+    if (isLoss) emoji = '😟';
+    else if (impact.money > 5000) emoji = '🚀';
+    else if (impact.money > 0) emoji = '😊';
 
     div.innerHTML = `
-        <h2 style="color: var(--accent); margin-bottom: 10px;">Outcome: ${historyItem.choice}</h2>
-        
-        <div class="story-outcome-box" style="margin-bottom: 20px; font-size: 1.1rem; color: var(--dark); font-family: 'Outfit';">
-            ${historyItem.story_outcome ? `<strong>Outcome:</strong> ${historyItem.story_outcome}` : ''}
-        </div>
-        <div class="stats-change" style="display: flex; justify-content: space-around; padding: 20px; background: rgba(0,0,0,0.05); border-radius: var(--radius-md); margin-bottom: 30px;">
-            <div style="color: ${(impact.money || 0) >= 0 ? 'green' : 'red'}; font-weight: 700; font-size: 1.2rem;">
-                ${(impact.money || 0) >= 0 ? `+₹${impact.money} profit 📈` : `-₹${Math.abs(impact.money)} loss 📉`}
+        <div class="feedback-card glass">
+            <div class="feedback-header">
+                <span class="decision-emoji">${emoji}</span>
+                <h2>Decision Outcome</h2>
             </div>
-            <div style="color: ${(impact.xp || 0) >= 0 ? 'green' : 'red'}; font-weight: 700; font-size: 1.2rem;">
-                ⭐ ${(impact.xp || 0) >= 0 ? '+' : ''}${impact.xp || 0} XP
+            
+            <div class="feedback-body">
+                <div class="impact-summary">
+                    <div class="impact-item ${isLoss ? 'negative' : 'positive'}">
+                        <span class="impact-label">Balance Change</span>
+                        <span class="impact-value" id="money-value">₹${historyItem.oldMoney}</span>
+                        <span class="impact-diff">${impact.money >= 0 ? '+' : ''}${impact.money}</span>
+                    </div>
+                    <div class="impact-item positive">
+                        <span class="impact-label">Experience</span>
+                        <span class="impact-value">+${impact.xp || 0} XP</span>
+                    </div>
+                </div>
+
+                <div class="outcome-story">
+                    <p>${historyItem.story_outcome || "Your decision has been processed."}</p>
+                </div>
+
+                <div class="mentor-lesson">
+                    <div class="mentor-badge">AI MENTOR</div>
+                    <p>${historyItem.mentor || "Strategic thinking is key to high ROI."}</p>
+                </div>
+                
+                ${historyItem.ai_feedback ? `
+                <div class="why-happened-container">
+                    <button id="toggle-why" class="btn-link">Why did this happen? ▾</button>
+                    <div id="ai-insight" class="ai-insight-box hidden">
+                        <p>${historyItem.ai_feedback}</p>
+                    </div>
+                </div>
+                ` : ''}
             </div>
-        </div>
 
-        <div class="mentor-box" style="text-align: left; border-left: 4px solid var(--primary); padding-left: 20px; margin-bottom: 20px;">
-            <div style="font-weight: 700; color: var(--primary); margin-bottom: 5px;">AI Mentor says:</div>
-            <p style="font-style: italic; color: var(--dark);">${historyItem.mentor || "Great choice! Keep balancing your stats."}</p>
+            <button id="continue-story" class="btn btn-primary continue-btn">Continue Journey</button>
         </div>
-
-        <div class="ai-status-box" style="text-align: left; background: rgba(23, 190, 187, 0.1); border-radius: var(--radius-sm); padding: 15px; margin-bottom: 30px;">
-            <div style="font-size: 0.8em; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 5px;">Global Advisor Insight:</div>
-            <p style="margin: 0; color: var(--accent); font-size: 0.95em;">"${historyItem.ai_feedback}"</p>
-        </div>
-
-        <button id="continue-story" class="btn btn-primary" style="width: 100%;">Continue Story</button>
     `;
+
+    // Money Count Animation
+    const moneyVal = div.querySelector('#money-value');
+    if (moneyVal && impact.money !== 0) {
+        const start = historyItem.oldMoney;
+        const end = app.state.stats.money;
+        const duration = 1000;
+        let startTime = null;
+
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const current = Math.floor(progress * (end - start) + start);
+            moneyVal.innerHTML = `₹${current}`;
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                moneyVal.classList.add('pulse');
+            }
+        };
+        setTimeout(() => requestAnimationFrame(animate), 500);
+    }
+
+    // Toggle Why This Happened
+    const toggleBtn = div.querySelector('#toggle-why');
+    const insightBox = div.querySelector('#ai-insight');
+    if (toggleBtn && insightBox) {
+        toggleBtn.onclick = () => {
+            insightBox.classList.toggle('hidden');
+            toggleBtn.innerHTML = insightBox.classList.contains('hidden') ? 'Why did this happen? ▾' : 'Hide insight ▴';
+        };
+    }
 
     div.querySelector('#continue-story').onclick = () => {
         app.continueStory();

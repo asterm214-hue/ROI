@@ -26,18 +26,21 @@ export const Gameplay = (app, node) => {
         <div class="game-bg" style="background-image: url('${node.background}');"></div>
         
         <div class="top-bar glass">
-            <div class="brand" style="color: var(--primary); font-size: 1.2rem;">ROI</div>
+            <div class="brand" style="color: var(--primary); font-size: 1.25rem; letter-spacing: 1px;">ROI QUEST</div>
             <div class="stats-container">
                 <div class="stat-item glass" title="Money">
-                    💰 <span>Money:</span> ₹${app.state.stats.money}
+                    <span class="icon">💰</span> <span class="label">Budget:</span> <span class="value">₹${app.state.stats.money}</span>
                 </div>
-                <div class="stat-item glass" title="XP" style="display: flex; align-items: center; gap: 8px;">
-                    ⭐ <span>XP:</span> ${app.state.stats.xp || 0}
-                    <div style="background: rgba(0,0,0,0.1); width: 100px; height: 10px; border-radius: 5px; overflow: hidden; margin-top:2px;">
-                        <div style="background: #17BEBB; width: ${Math.min((app.state.stats.xp || 0) * 2, 100)}%; height: 100%;"></div>
+                <div class="stat-item glass" title="Story Level">
+                    <span class="icon">📜</span> <span class="label">Level ${node.id.startsWith('lvl1') ? '1' : (node.id.startsWith('lvl2') ? '2' : '3')}:</span>
+                    <div class="xp-bar-container" title="Current XP: ${app.state.stats.xp || 0}">
+                        <div class="xp-bar-fill" style="width: ${(app.state.stats.xp || 0) % 100}%"></div>
                     </div>
                 </div>
-                <button id="logout-btn" class="btn glass-btn" style="padding: 5px 12px; font-size: 0.8rem; background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3); color: #d63031;">Logout</button>
+            </div>
+            <div class="top-bar-actions">
+                <button id="nav-map-btn" class="btn logout-btn" title="Back to Map">🗺️</button>
+                <button id="logout-btn" class="btn logout-btn" title="Logout">🚪</button>
             </div>
         </div>
 
@@ -138,6 +141,7 @@ export const Gameplay = (app, node) => {
     const buttons = div.querySelectorAll('.choice-btn');
     buttons.forEach(btn => {
         btn.onclick = () => {
+            // Logic handled in app.handleChoice
             clearTimeout(speechFallbackTimer);
             speech.stop();
             const index = btn.dataset.index;
@@ -161,6 +165,12 @@ export const Gameplay = (app, node) => {
             app.startLevel(app.state.currentChapter);
         };
     }
+
+    div.querySelector('#nav-map-btn').onclick = () => {
+        clearTimeout(speechFallbackTimer);
+        speech.stop();
+        app.setView('map');
+    };
 
     div.querySelector('#logout-btn').onclick = () => {
         clearTimeout(speechFallbackTimer);

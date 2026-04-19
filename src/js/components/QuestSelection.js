@@ -52,6 +52,7 @@ const renderQuestCards = (app, container, quests) => {
 
     container.querySelectorAll('.quest-card-action').forEach(button => {
         button.addEventListener('click', () => {
+            app.sound.playSFX('click');
             const card = button.closest('.quest-select-card');
             const questId = card.dataset.questId;
             const replay = button.dataset.action === 'replay';
@@ -86,7 +87,10 @@ export const QuestSelection = (app) => {
         </main>
     `;
 
-    div.querySelector('#quest-selection-back').onclick = () => app.setView('map');
+    div.querySelector('#quest-selection-back').onclick = () => {
+        app.sound.playSFX('click');
+        app.setView('map');
+    };
 
     const grid = div.querySelector('#quest-grid');
     app.fetchQuestSummaries()

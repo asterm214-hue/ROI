@@ -15,6 +15,7 @@ import {
     resetLocalQuestProgress,
     saveLocalQuestProgress
 } from './questEngine.js';
+import { soundEngine } from './soundEngine.js';
 
 class App {
     constructor() {
@@ -37,6 +38,7 @@ class App {
         };
         
         this.apiBase = window.location.origin;
+        this.sound = soundEngine;
         this.loadState();
         this.init();
     }
@@ -88,11 +90,25 @@ class App {
 
     async startLevel(chapterId) {
         try {
-            // Set starting stats based on level
-            let startStats = { money: 0, xp: 0 };
-            if (chapterId.startsWith('lvl1')) startStats.money = 10000;
-            else if (chapterId.startsWith('lvl2')) startStats.money = 50000;
-            else if (chapterId.startsWith('lvl3')) startStats.money = 500000;
+            // Only set starting stats if we're moving to a NEW level or starting fresh
+            let startStats = null;
+            
+            const isLevelEntry = ['lvl1_scene1', 'lvl2_scene1', 'lvl3_scene1'].includes(chapterId);
+            const isDifferentLevel = !this.state.currentChapter || !this.state.currentChapter.startsWith(chapterId.substring(0, 4));
+            const isNewLevel = isLevelEntry || isDifferentLevel;
+            
+            if (isNewLevel || this.state.stats.money === 0) {
+                startStats = { money: 0, xp: this.state.stats.xp || 0 };
+                if (chapterId.startsWith('lvl1')) startStats.money = 5000;
+                else if (chapterId.startsWith('lvl2')) startStats.money = 50000;
+                else if (chapterId.startsWith('lvl3')) startStats.money = 500000;
+            } else {
+                // Keep current stats for resuming
+                startStats = {
+                    money: this.state.stats.money,
+                    xp: this.state.stats.xp || 0
+                };
+            }
 
             const response = await fetch(`${this.apiBase}/start_game`, {
                 method: 'POST',
@@ -384,6 +400,23 @@ class App {
 
     async handleChoice(choiceId) {
         try {
+            this.sound.playSFX('click');
+            
+            // Show processing state for suspense
+            const dialogueBox = document.querySelector('.dialogue-box');
+            if (dialogueBox) {
+                const originalContent = dialogueBox.innerHTML;
+                dialogueBox.innerHTML = `
+                    <div class="processing-decision">
+                        <div class="spinner"></div>
+                        <p>Market is fluctuating...</p>
+                        <p style="font-size: 0.8rem; opacity: 0.7;">Analyzing decision impact</p>
+                    </div>
+                `;
+                // Wait for 1.5 seconds for suspense
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+
             const response = await fetch(`${this.apiBase}/make_choice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -394,6 +427,7 @@ class App {
             });
             const data = await response.json();
             
+            const oldMoney = this.state.stats.money;
             this.state.stats = {
                 money: data.user.money,
                 xp: data.user.xp || 0
@@ -406,7 +440,8 @@ class App {
                 impact: data.impact,
                 mentor: data.mentor_opinion,
                 ai_feedback: data.ai_feedback,
-                story_outcome: data.story_outcome
+                story_outcome: data.story_outcome,
+                oldMoney: oldMoney
             });
 
             this.state.pendingScenario = data.next_scenario;
@@ -462,6 +497,35 @@ class App {
         const viewElement = (viewMap[this.state.view] || viewMap.map)();
         viewElement.classList.add('fade-in');
         this.container.appendChild(viewElement);
+
+        // Global Music Toggle in top-right
+        if (this.state.view !== 'auth') {
+            this.renderMusicToggle();
+        }
+    }
+
+    renderMusicToggle() {
+        let toggle = document.getElementById('global-music-toggle');
+        if (!toggle) {
+            toggle = document.createElement('button');
+            toggle.id = 'global-music-toggle';
+            toggle.className = 'music-toggle-btn glass';
+            document.body.appendChild(toggle);
+        }
+        
+        const isMuted = this.sound.muted;
+        toggle.innerHTML = isMuted ? '🔇' : '🎵';
+        toggle.title = isMuted ? 'Unmute' : 'Mute';
+        
+        toggle.onclick = (e) => {
+            e.stopPropagation();
+            const nowActive = this.sound.toggleMusic();
+            toggle.innerHTML = nowActive ? '🎵' : '🔇';
+            toggle.title = nowActive ? 'Mute' : 'Unmute';
+        };
+
+        // Ensure music starts on first user action if not already playing
+        this.sound.startMusic();
     }
 }
 
